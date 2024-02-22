@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Barbería</title>
+    <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
+</head>
+<body>
+
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Galería</a></li>
+                <li><a href="#">Contacto</a></li>
+                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Iniciar Sesión - Pop-up -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="loginPassword" required>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <p><a href="#" id="registerLink">¿No estás registrado?</a></p>
+        </div>
+    </div>
+
+    <!-- Registrarse - Pop-up -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="registerForm">
+                <label for="registerName">Nombre:</label>
+                <input type="text" id="registerName" name="registerName" required>
+                <label for="registerEmail">Correo Electrónico:</label>
+                <input type="email" id="registerEmail" name="registerEmail" required>
+                <label for="registerPassword">Contraseña:</label>
+                <input type="password" id="registerPassword" name="registerPassword" required>
+                <button type="submit">Registrarse</button>
+            </form>
+            <!-- Botón de volver atrás -->
+            <br>
+            ¿Tienes cuenta? <a href="#" id="backToLogin">Volver atrás</a>
+        </div>
+    </div>
+    
+        <!-- Contenido principal -->
+        <div class="main-content">
+            <section class="welcome-section">
+                <div class="container">
+                    <h1>Bienvenido a Tu Barbería</h1>
+                    <p>Experimenta la excelencia en cada corte. En Tu Barbería, combinamos técnicas tradicionales con las últimas tendencias para ofrecerte el mejor servicio. ¡Ven y transforma tu estilo con nosotros!</p>
+                </div>
+            </section>
+            <section class="services-section">
+                <div class="container">
+                    <h2>Nuestros Servicios</h2>
+                    <ul class="services-list">
+                        <li>Corte de cabello clásico y moderno</li>
+                        <li>Afeitado tradicional</li>
+                        <li>Arreglo de barba y bigote</li>
+                        <li>Tratamientos capilares y faciales</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+    <div class="footer">
+        <div class="container">
+            <ul>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Aviso Legal</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../static/js/script.js" defer></script> <!-- Asegúrate de que la ruta sea correcta -->
+
+</body>
+</html>
