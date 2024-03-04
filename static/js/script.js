@@ -74,3 +74,64 @@ window.onscroll = function() {
     prevScrollpos = currentScrollPos;
 }
 
+var mySwiper = new Swiper('.swiper-container', {
+    autoplay: {
+        delay: 5000,
+    },
+});
+
+// Código previo...
+
+// Botón de volver arriba
+var backToTop = document.getElementById("backToTop");
+
+// Mostrar el botón de volver arriba cuando se hace scroll hacia abajo
+window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    
+    // Ocultar o mostrar la barra de navegación
+    if (prevScrollpos > currentScrollPos) {
+        document.querySelector(".navbar").style.top = "0";
+    } else {
+        document.querySelector(".navbar").style.top = "-50px"; // Ajusta este valor al tamaño de tu navbar
+    }
+    prevScrollpos = currentScrollPos;
+    
+    // Mostrar el botón de volver arriba después de un cierto scroll
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        backToTop.style.display = "block";
+    } else {
+        backToTop.style.display = "none";
+    }
+};
+
+// Funcionalidad para volver al principio de la página
+backToTop.addEventListener("click", function() {
+    document.body.scrollTop = 0; // Para Safari
+    document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE y Opera
+});
+// JavaScript para ocultar el navbar de forma suave al desplazarse hacia abajo
+var prevScrollpos = window.pageYOffset;
+
+window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    // Ajusta el estilo top del navbar basándose en la posición de desplazamiento
+    if (prevScrollpos < currentScrollPos) {
+        document.querySelector(".navbar").style.top = "-60px"; // Asegúrate de que este valor sea suficiente para ocultar el navbar
+    } else {
+        document.querySelector(".navbar").style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+
+    // Mostrar el botón de volver arriba después de un cierto scroll
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        backToTop.style.display = "block";
+    } else {
+        backToTop.style.display = "none";
+    }
+};
+
+// Funcionalidad para volver al principio de la página con suavizado
+backToTop.addEventListener("click", function() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+});

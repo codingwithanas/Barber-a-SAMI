@@ -3,7 +3,10 @@ body {
     font-family: 'Roboto', sans-serif; /* Cambiar la tipografía para un look más moderno */
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5; /* Fondo más claro para mejorar la legibilidad */
+    background-color: #656565; /* Fondo más claro para mejorar la legibilidad */
+    display: flex;
+    flex-direction: column; /* Ajuste para el sticky footer */
+    min-height: 100vh; /* Ajuste para el sticky footer */
 }
 
 .container {
@@ -16,12 +19,14 @@ body {
 .navbar {
     background-color: #282828; /* Color más oscuro para un look elegante */
     color: #fff;
-    padding: 15px 0;
+    padding: 40px 0; /* Aumenta el padding para hacer el nav más alto */
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000; /* Asegurar que la navbar esté por encima de otros elementos */
+    transition: top 0.5s; /* Suaviza la transición del nav */
 }
+
 
 .navbar .container {
     display: flex;
@@ -135,7 +140,7 @@ button[type="submit"]:hover {
     color: #fff;
     padding: 20px 0;
     text-align: center;
-    margin-top: auto; /* Clave para el sticky footer */
+    width: 100%; /* Ajuste para el sticky footer */
 }
 
 .footer .container {
@@ -181,4 +186,58 @@ button[type="submit"]:hover {
     .footer .container {
         flex-direction: column;
     }
+}
+
+.slider {
+    width: 100%;
+    overflow: hidden;
+}
+
+.slide {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+}
+
+.slide-content h2 {
+    font-size: 3em;
+    margin-bottom: 0.5em;
+}
+
+.slide-content p {
+    font-size: 1.5em;
+}
+
+/* Asegúrate de que el resto de tu contenido no se superponga con la barra de navegación fija */
+.main-content {
+    padding-top: 60px; /* Ajusta este valor según la altura de tu barra de navegación */
+}
+
+/* Estilos para el botón de Ir Arriba */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1001; /* Asegúrate de que esté sobre los otros elementos */
+    transition: opacity 0.3s ease;
+}
+
+.back-to-top a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Estilos para ocultar y mostrar la navbar y el botón */
+.hidden {
+    display: none !important; /* Importante para sobrescribir cualquier otro estilo de display */
 }
