@@ -1,11 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Servicios</title>
+    <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
+    <style>
+        
+    </style>
 </head>
 <body>
-    
+
+    <!-- Barra de navegación -->
+    <section>
+        <nav class="navbar">
+            <div class="container">
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Servicios</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </section>
+
+    <!-- Iniciar Sesión - Pop-up -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="loginPassword" required>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <p><a href="#" id="registerLink">¿No estás registrado?</a></p>
+        </div>
+    </div>
+
+    <!-- Registrarse - Pop-up -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="registerForm">
+                <label for="registerName">Nombre:</label>
+                <input type="text" id="registerName" name="registerName" required>
+                <label for="registerEmail">Correo Electrónico:</label>
+                <input type="email" id="registerEmail" name="registerEmail" required>
+                <label for="registerPassword">Contraseña:</label>
+                <input type="password" id="registerPassword" name="registerPassword" required>
+                <button type="submit">Registrarse</button>
+            </form>
+            <!-- Botón de volver atrás -->
+            <br>
+            ¿Tienes cuenta? <a href="#" id="backToLogin">Volver atrás</a>
+        </div>
+    </div>
+    <div id="backToTop" class="back-to-top" style="display: none;">
+        <a href="javascript:void(0);">↑</a>
+    </div>
+
+    <!-- Contenido de Contacto -->
+    <section class="services">
+        <div class="container">
+            <h2>Nuestros Servicios</h2>
+            <p>En nuestra peluquería ofrecemos una amplia gama de servicios para satisfacer tus necesidades de cuidado capilar. Desde cortes de pelo hasta tratamientos de coloración, contamos con profesionales dedicados a brindarte la mejor experiencia.</p>
+            
+            <!-- Lista de Servicios -->
+            <ul class="service-list">
+                <li>
+                    <h3>Corte de Pelo</h3>
+                    <p>Precio: $XX</p>
+                </li>
+                <li>
+                    <h3>Lavado y Peinado</h3>
+                    <p>Precio: $XX</p>
+                </li>
+                <!-- Agrega más servicios aquí -->
+            </ul>
+        </div>
+    </section>
+
+    <div class="footer">
+        <div class="container">
+            <ul>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Aviso Legal</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../static/js/script.js" defer></script> <!-- Asegúrate de que la ruta sea correcta -->
+
 </body>
 </html>
