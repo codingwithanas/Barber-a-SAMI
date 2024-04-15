@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbería SAMI - Estilos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../static/css/styles2.css"> <!-- Enlazar el archivo de estilos2.css -->
+</head>
+<body>
+
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Galería</a></li>
+                <li><a href="#">Contacto</a></li>
+                <li><a href="/estils">Estilos</a></li>
+                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1>Identifica tu Corte</h1>
+        <div class="opciones">
+            <h2>Tipo de Cabeza</h2>
+            <select id="tipoCabeza" class="form-control mb-3">
+                <option value="Redonda">Redonda</option>
+                <option value="Cuadrada">Cuadrada</option>
+                <option value="Ovalada">Ovalada</option>
+                <option value="Alargada">Alargada</option>
+                <option value="Triangular">Triangular</option>
+            </select>
+            <h2>Tipo de Cabello</h2>
+            <select id="tipoCabello" class="form-control mb-3">
+                <option value="Liso">Liso</option>
+                <option value="Ondulado">Ondulado</option>
+                <option value="Rizado">Rizado</option>
+                <option value="Crespo">Crespo</option>
+                <option value="Fino">Fino</option>
+            </select>
+        </div>
+
+        <!-- Cuadrado de respuestas del chatbot -->
+        <div id="respuestaChatbot" class="respuesta-chatbot" style="display: none;">
+            <h2>Recomendación de Corte:</h2>
+            <div id="recomendacionCorte"></div>
+        </div>
+
+        <!-- Botón para identificar el corte -->
+        <button onclick="identificarCorte()" class="btn-primary">Identifica tu Corte</button>
+    </div>
+
+    <!-- Modal del chatbot -->
+    <div id="chatbotModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Chatbot</h2>
+            <div id="respuestaChatbot"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <ul>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Aviso Legal</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../static/js/script.js" defer></script> 
+    <script>
+        // Función para enviar la selección del estilo al backend y obtener la respuesta del chatbot
+        function identificarCorte() {
+            // Obtener los valores seleccionados
+            var tipoCabeza = document.getElementById('tipoCabeza').value;
+            var tipoCabello = document.getElementById('tipoCabello').value;
+
+            // Realizar la solicitud al servidor
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ opcion1: tipoCabeza, opcion2: tipoCabello }) // Enviar las opciones seleccionadas
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar la respuesta del chatbot en el cuadrado de respuestas
+                document.getElementById('recomendacionCorte').innerText = data.respuesta;
+                document.getElementById('respuestaChatbot').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Función para cerrar el pop-up del chatbot
+        document.querySelector('#chatbotModal .close').addEventListener('click', function() {
+            document.getElementById('chatbotModal').style.display = 'none';
+        });
+    </script> 
+</body>
+</html>
