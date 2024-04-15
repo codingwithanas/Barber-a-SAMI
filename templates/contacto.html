@@ -1,11 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Contacto</title>
+    <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
+    <style>
+        .slider {
+            position: relative;
+            height: 100vh;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+        }
+
+        .slide-content p {
+            margin-bottom: 10px;
+        }
+
+        .slide iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            z-index: 0;
+        }
+    </style>
 </head>
 <body>
-    
+
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Contacto</a></li>
+                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Iniciar Sesión - Pop-up -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="loginPassword" required>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <p><a href="#" id="registerLink">¿No estás registrado?</a></p>
+        </div>
+    </div>
+
+    <!-- Registrarse - Pop-up -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="registerForm">
+                <label for="registerName">Nombre:</label>
+                <input type="text" id="registerName" name="registerName" required>
+                <label for="registerEmail">Correo Electrónico:</label>
+                <input type="email" id="registerEmail" name="registerEmail" required>
+                <label for="registerPassword">Contraseña:</label>
+                <input type="password" id="registerPassword" name="registerPassword" required>
+                <button type="submit">Registrarse</button>
+            </form>
+            <!-- Botón de volver atrás -->
+            <br>
+            ¿Tienes cuenta? <a href="#" id="backToLogin">Volver atrás</a>
+        </div>
+    </div>
+    <div id="backToTop" class="back-to-top" style="display: none;">
+        <a href="javascript:void(0);">↑</a>
+    </div>
+
+    <!-- Contenido de Contacto -->
+    <div class="slider">
+        <div class="slide" style="background-image: url('../static/assets/IA_Contacto.jpg')">
+            <div class="slide-content">
+                <h2>Contacto</h2>
+                <p>Número de Teléfono: <a href="tel:+602 03 35 38">+602 03 35 38</a></p>
+                <p>Correo Electrónico: <a href="mailto:info@gmail.com">info@example.com</a></p>
+                
+                <!-- Mapa de Google Maps -->
+                <iframe src="https://www.google.com/maps/embed/v1/place?key=NOMBREAPI&q=Barberia+Sami+Peluqueria/@41.4482126,1.9711273,17z/data=!3m1!4b1!4m6!3m5!1s0x12a48fc12025e589:0x1ac67400d05055f!8m2!3d41.4482126!4d1.9711273!16s%2Fg%2F11gpgs2sb2?entry=ttu" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>        
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <ul>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Aviso Legal</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../static/js/script.js" defer></script> <!-- Asegúrate de que la ruta sea correcta -->
+    <!-- Enlazar la API de Google Maps -->
+    <script src="https://maps.googleapis.com/maps/api/js?keyNOMBREAPI="></script>
+
 </body>
 </html>
