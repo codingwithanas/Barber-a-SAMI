@@ -30,6 +30,10 @@ def index():
 def estils():
         return render_template('estils.html')
 
+@app.route('/reservar')
+def reservar():
+        return render_template('reservar.html')
+
 # Ruta para el inicio de sesión
 @app.route('/login', methods=['POST'])
 def login():

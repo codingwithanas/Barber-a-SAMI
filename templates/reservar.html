@@ -1,3 +1,4 @@
+<!-- reservar.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,19 +9,7 @@
 </head>
 <body>
 
-    <!-- Barra de navegación -->
-    <nav class="navbar">
-        <div class="container">
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/services">Servicios</a></li>
-                <li><a href="/gallery">Galería</a></li>
-                <li><a href="/contact">Contacto</a></li>
-                <li><a href="/reservas">Reservas</a></li>
-                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
-            </ul>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <!-- Contenido principal -->
     <div class="container">
@@ -41,14 +30,7 @@
         </form>
     </div>
 
-    <div class="footer">
-        <div class="container">
-            <ul>
-                <li><a href="#">Política de Privacidad</a></li>
-                <li><a href="#">Aviso Legal</a></li>
-            </ul>
-        </div>
-    </div>
+    {% include 'footer.html' %}
 
     <script src="../static/js/script.js" defer></script>
 </body>
