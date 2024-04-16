@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from psycopg2 import connect, IntegrityError
 import openai
-
+import os
 app = Flask(__name__)
-# Conexión a la base de datos PostgreSQL
+app.secret_key = os.urandom(24)
 db_user = 'fl0user'
 db_password = 'QX2Bg8JoaRvG'
 db_host = 'ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io'
