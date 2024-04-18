@@ -5,22 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería SAMI - Estilos</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="../static/css/styles2.css"> <!-- Enlazar el archivo de estilos2.css -->
+    <link rel="stylesheet" href="../static/css/style_chatbot.css"> <!-- Enlazar el archivo de estilos.css -->
 </head>
 <body>
 
     <!-- Barra de navegación -->
-    <nav class="navbar">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Servicios</a></li>
-                <li><a href="#">Galería</a></li>
-                <li><a href="#">Contacto</a></li>
-                <li><a href="/estils">Estilos</a></li>
-                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
-            </ul>
+            <a class="navbar-brand" href="#">Barbería SAMI</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Galería</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Estilos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="loginBtn">Inicia sesión</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -47,34 +64,41 @@
         </div>
 
         <!-- Cuadrado de respuestas del chatbot -->
-        <div id="respuestaChatbot" class="respuesta-chatbot" style="display: none;">
+        <div id="respuestaChatbot" class="respuesta-chatbot">
             <h2>Recomendación de Corte:</h2>
             <div id="recomendacionCorte"></div>
         </div>
 
         <!-- Botón para identificar el corte -->
-        <button onclick="identificarCorte()" class="btn-primary">Identifica tu Corte</button>
+        <button onclick="identificarCorte()" class="btn btn-primary btn-block mt-3">Identifica tu Corte</button>
     </div>
 
     <!-- Modal del chatbot -->
     <div id="chatbotModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Chatbot</h2>
-            <div id="respuestaChatbot"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chatbot</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="respuestaChatbotModal"></div>
+            </div>
         </div>
     </div>
 
-    <div class="footer">
+    <!-- Footer -->
+    <footer class="footer">
         <div class="container">
-            <ul>
-                <li><a href="#">Política de Privacidad</a></li>
-                <li><a href="#">Aviso Legal</a></li>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="#">Política de Privacidad</a></li>
+                <li class="list-inline-item"><a href="#">Aviso Legal</a></li>
             </ul>
         </div>
-    </div>
+    </footer>
 
-    <script src="../static/js/script.js" defer></script> 
+    <script src="../static/js/script.js" defer></script>
     <script>
         // Función para enviar la selección del estilo al backend y obtener la respuesta del chatbot
         function identificarCorte() {

@@ -36,22 +36,6 @@
         registerModal.style.display = "none";
     });
 
-    // Controlar el envío del formulario de inicio de sesión
-    var loginForm = document.getElementById("loginForm");
-    loginForm.addEventListener("submit", function(event) {
-        event.preventDefault(); // Evitar el envío del formulario
-        // Aquí puedes agregar la lógica para el inicio de sesión con AJAX u otra tecnología
-        console.log("Iniciar sesión...");
-    });
-
-    // Controlar el envío del formulario de registro
-    var registerForm = document.getElementById("registerForm");
-    registerForm.addEventListener("submit", function(event) {
-        event.preventDefault(); // Evitar el envío del formulario
-        // Aquí puedes agregar la lógica para el registro con AJAX u otra tecnología
-        console.log("Registrarse...");
-    });
-
     // Agregar funcionalidad para el botón de volver atrás en el pop-up de registro
     backToLogin.addEventListener("click", function(event) {
         event.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
@@ -113,44 +97,6 @@
         backToLogin.addEventListener('click', function () {
             registerModal.style.display = 'none';
             loginModal.style.display = 'block';
-        });
-    
-        // Enviar formulario de inicio de sesión
-        loginForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(loginForm);
-            fetch('/login', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message || data.error);
-                if (data.message) {
-                    // Redireccionar a la página de inicio o realizar alguna acción adicional
-                    window.location.href = '/'; // Cambia esto según tu aplicación
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    
-        // Enviar formulario de registro
-        registerForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(registerForm);
-            fetch('/register', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message || data.error);
-                if (data.message) {
-                    // Redireccionar a la página de inicio o realizar alguna acción adicional
-                    window.location.href = '/'; // Cambia esto según tu aplicación
-                }
-            })
-            .catch(error => console.error('Error:', error));
         });
     });
     
