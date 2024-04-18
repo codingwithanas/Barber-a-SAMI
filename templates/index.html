@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Barbería</title>
+    <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
+</head>
+<body>
+
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Servicios</a></li>
+           
+                <li><a href="#">Galería</a></li>
+                <li><a href="#">Contacto</a></li>
+                <li><a href="/estils">Estils</a></li>
+                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Iniciar Sesión - Pop-up -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="loginPassword" required>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <p><a href="#" id="registerLink">¿No estás registrado?</a></p>
+        </div>
+    </div>
+
+    <!-- Registrarse - Pop-up -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="registerForm">
+                <label for="registerName">Nombre:</label>
+                <input type="text" id="registerName" name="registerName" required>
+                <label for="registerEmail">Correo Electrónico:</label>
+                <input type="email" id="registerEmail" name="registerEmail" required>
+                <label for="registerPassword">Contraseña:</label>
+                <input type="password" id="registerPassword" name="registerPassword" required>
+                <button type="submit">Registrarse</button>
+            </form>
+            <!-- Botón de volver atrás -->
+            <br>
+            ¿Tienes cuenta? <a href="#" id="backToLogin">Volver atrás</a>
+        </div>
+    </div>
+    <div id="backToTop" class="back-to-top" style="display: none;">
+        <a href="javascript:void(0);">↑</a>
+    </div>
+        <!-- Contenido principal -->
+        <div class="slider">
+            <div class="slide" style="background-image: url('/static/assets/Barberia1.jpeg');">
+                <div class="slide-content">
+                    <h2>Estilo Moderno</h2>
+                    <p>Un corte para cada personalidad.</p>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('/static/assets/Barberia2.jpeg');">
+                <div class="slide-content">
+                    <h2>Barbería Clásica</h2>
+                    <p>Tradición y calidad en cada afeitado.</p>
+                </div>
+            </div>
+        </div>
+
+    <div class="footer">
+        <div class="container">
+            <ul>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Aviso Legal</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../static/js/script.js" defer></script> 
+    <script src="../static/js/form_handling.js" defer></script>
+</body>
+</html>
