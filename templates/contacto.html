@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacto</title>
-    <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
     <style>
         .slider {
             position: relative;
             height: 100vh;
+            margin-top: 50px
         }
 
         .slide {
@@ -18,14 +20,15 @@
             width: 100%;
             height: 100%;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
         }
 
         .slide-content {
-            text-align: center;
-            color: white;
+            text-align: left;
+            color: black;
             z-index: 1;
+            margin-left: 20px;
         }
 
         .slide-content p {
@@ -40,6 +43,45 @@
             height: 100%;
             border: 0;
             z-index: 0;
+        }
+
+        .h2-contacto {
+            padding-left: 20dp;
+        }
+
+        .InputText a {
+            padding-left: 20dp;
+        }
+
+        .map-contacto {
+            background-color: rgb(225, 190, 196);
+        }
+
+        /* Estilos para el recuadro del formulario */
+        .contact-form-box {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Ajustes para los campos de entrada y el área de texto */
+        .InputText {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .InputText textarea {
+            height: 150px;
         }
     </style>
 </head>
@@ -101,26 +143,29 @@
     <div class="slider">
         <div class="slide" style="background-image: url('../static/assets/IA_Contacto.jpg')">
             <div class="slide-content">
-                <h2>Formulario:</h2>
+                <div class="contact-form-box"> <!-- Recuadro del formulario -->
+                    <h2 class="h2-contacto">Formulario:</h2>
                     <p class="lead">Responderemos a tus dudas lo antes posible. También puedes llamarnos al: 602 03 35 38</p>
                     <div class="contact_form comment-form-wrap wow rcw-form">
                         <form id="contactform" class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Nombre y apellidos" required> 
+                            <div class="col-md-6">
+                                <input type="text" name="name" id="name" class="InputText c" placeholder="Nombre y apellidos" required> 
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <input type="text" name="email" id="email" class="form-control" placeholder="Correo electrónico" required> 
+                            <div class="col-md-6">
+                                <input type="email" name="email" id="email" class="InputText c" placeholder="Correo electrónico" required> 
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <input type="text" name="phone" id="phone" class="form-control" placeholder="Teléfono"> 
+                            <div class="col-md-6">
+                                <input type="text" name="phone" id="phone" class="InputText c" placeholder="Teléfono"> 
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <input type="text" name="subject" id="subject" class="form-control" placeholder="Asunto" required> 
+                            <div class="col-md-6">
+                                <input type="text" name="subject" id="subject" class="InputText c" placeholder="Asunto" required> 
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <textarea class="form-control" name="comments" id="comments" rows="6" placeholder="Mensaje" required></textarea>
+                            <div class="col-md-12">
+                                <textarea class="InputText d" name="comments" id="comments" rows="6" placeholder="Mensaje" required></textarea>
+                            </div>
+                            <div class="col-md-12">
                                 <div class="pull-left">
-                                    <p>Contacta con barberiasami@gmail.com.</p>
+                                    <p>Contacta con barberiasami@gmail.com</p>
                                 </div>
                                 <div id="message"></div>
                                 <div class="pull-right">
@@ -128,12 +173,13 @@
                                 </div>
                             </div>
                         </form> 
-                        
+                    </div>
+                </div>
             </div>
         </div>        
     </div>
 </section>
-<section id="map" class="map">
+<section id="map" class="map-contacto">
     <div class="container">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2990.5856017331107!2d1.9711273!3d41.448212600000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a48fc12025e589%3A0x1ac67400d05055f!2sBarberia%20Sami%20Peluqueria!5e0!3m2!1ses!2ses!4v1713169216177!5m2!1ses!2ses" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
