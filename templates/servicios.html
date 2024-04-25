@@ -6,27 +6,47 @@
     <title>Servicios</title>
     <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
     <style>
-         /* Estilos para la lista de servicios */
+         .services {
+            background-image: url('../static/assets/IA_Servicio.jpg');
+            text-align: center;
+            padding: 50px 0;
+         }
+
+         .panel {
+            background-color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+         }
+
+         .slide-content {
+            max-width: 800px;
+            margin: 0 auto;
+         }
+
          .service-list {
+            margin-top: auto;
             list-style-type: none;
             padding: 0;
-        }
+         }
 
-        .service-list li {
+         .service-list li {
             margin-bottom: 20px;
             border: 1px solid #ccc;
             padding: 15px;
             border-radius: 5px;
             background-color: #f9f9f9;
-        }
+         }
 
-        .service-list h3 {
+         .service-list h3 {
             margin-top: 0;
-        }
+         }
 
-        .service-list p {
+         .service-list p {
             margin-bottom: 0;
-        }
+         }
     </style>
 </head>
 <body>
@@ -82,32 +102,36 @@
         <a href="javascript:void(0);">↑</a>
     </div>
 
-    <!-- Contenido de Contacto -->
+    <!-- Contenido de Servicios -->
     <section class="services">
         <div class="container">
-            <h2>Nuestros Servicios</h2>
-            <p>En nuestra peluquería ofrecemos una amplia gama de servicios para satisfacer tus necesidades de cuidado capilar. Desde cortes de pelo hasta tratamientos de coloración, contamos con profesionales dedicados a brindarte la mejor experiencia.</p>
-            
-            <!-- Lista de Servicios -->
-            <ul class="service-list">
-                <li>
-                    <h3>Corte de Pelo</h3>
-                    <p>Precio: $XX</p>
-                </li>
-                <li>
-                    <h3>Lavado y Peinado</h3>
-                    <p>Precio: $XX</p>
-                </li>
-                <li>
-                    <h3>Arreglo de Barba</h3>
-                    <p>Precio: $XX</p>
-                </li>
-                <li>
-                    <h3>Arreglo de Cejas</h3>
-                    <p>Precio: $XX</p>
-                </li>
-                <!-- Agrega más servicios aquí -->
-            </ul>
+            <div class="panel">
+                <div class="slide-content">
+                    <h2>Nuestros Servicios</h2>
+                    <p>En nuestra peluquería ofrecemos una amplia gama de servicios para satisfacer tus necesidades de cuidado capilar. Desde cortes de pelo hasta tratamientos de coloración, contamos con profesionales dedicados a brindarte la mejor experiencia.</p>
+                    
+                    <!-- Lista de Servicios -->
+                    <ul class="service-list">
+                        <li>
+                            <h3>Corte de Pelo</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <li>
+                            <h3>Lavado y Peinado</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <li>
+                            <h3>Arreglo de Barba</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <li>
+                            <h3>Arreglo de Cejas</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <!-- Agrega más servicios aquí -->
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
