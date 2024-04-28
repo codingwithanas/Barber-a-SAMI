@@ -9,7 +9,6 @@
 </head>
 <body>
 
-    <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">Barbería SAMI</a>
@@ -41,7 +40,6 @@
         </div>
     </nav>
 
-    <!-- Contenido principal -->
     <div class="container">
         <h1>Identifica tu Corte</h1>
         <div class="opciones">
@@ -63,17 +61,14 @@
             </select>
         </div>
 
-        <!-- Cuadrado de respuestas del chatbot -->
         <div id="respuestaChatbot" class="respuesta-chatbot">
             <h2>Recomendación de Corte:</h2>
             <div id="recomendacionCorte"></div>
         </div>
 
-        <!-- Botón para identificar el corte -->
         <button onclick="identificarCorte()" class="btn btn-primary btn-block mt-3">Identifica tu Corte</button>
     </div>
 
-    <!-- Modal del chatbot -->
     <div id="chatbotModal" class="modal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -88,7 +83,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <ul class="list-inline">
@@ -100,13 +94,10 @@
 
     <script src="../static/js/script.js" defer></script>
     <script>
-        // Función para enviar la selección del estilo al backend y obtener la respuesta del chatbot
         function identificarCorte() {
-            // Obtener los valores seleccionados
             var tipoCabeza = document.getElementById('tipoCabeza').value;
             var tipoCabello = document.getElementById('tipoCabello').value;
 
-            // Realizar la solicitud al servidor
             fetch('/chatbot', {
                 method: 'POST',
                 headers: {
@@ -116,14 +107,12 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Mostrar la respuesta del chatbot en el cuadrado de respuestas
                 document.getElementById('recomendacionCorte').innerText = data.respuesta;
                 document.getElementById('respuestaChatbot').style.display = 'block';
             })
             .catch(error => console.error('Error:', error));
         }
 
-        // Función para cerrar el pop-up del chatbot
         document.querySelector('#chatbotModal .close').addEventListener('click', function() {
             document.getElementById('chatbotModal').style.display = 'none';
         });
