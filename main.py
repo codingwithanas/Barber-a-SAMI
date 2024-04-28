@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
-from psycopg2 import connect, IntegrityError
+from psycopg2 import connect, IntegrityError, sql
 import openai
 import os
 app = Flask(__name__)
@@ -12,7 +12,6 @@ db_port = '5432'
 
 db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io:5432/dbanasimario?sslmode=require"
 
-# Función para establecer conexión a la base de datos
 def connect_db():
     return connect(db_url)
 
@@ -74,7 +73,6 @@ def logout():
     session.pop('users', None)
     return redirect(url_for('index'))
 
-# Ruta para procesar las solicitudes del frontend al chatbot
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
     data = request.json
@@ -93,6 +91,29 @@ def chatbot():
     )
 
     return jsonify({'respuesta': respuesta['choices'][0]['message']['content'].strip()})
+@app.route('/reservarcita', methods=['POST'])
+def reservarcita():
+    if 'users' not in session:
+        return jsonify(success=False, message="No hay ninguna sesión iniciada")
 
+    username = session['users']
+    data = request.get_json()
+    day = data['day']
+    hour = data['hour']
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql.SQL("INSERT INTO Reservas (dia, hora, usuario_id) SELECT %s, %s, id FROM users WHERE name = %s"), (day, hour, username))
+        conn.commit()
+        return jsonify(success=True)
+    except Exception as e:
+        print(e)
+        return jsonify(success=False, message="No se pudo realizar la reserva")
+
+    finally:
+        cur.close()
+        conn.close()
 if __name__ == '__main__':
     app.run(debug=True)
