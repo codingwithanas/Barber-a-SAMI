@@ -3,29 +3,33 @@ window.onload = function () {
     var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     var hours = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
 
-    // Crear las filas y columnas de la tabla
-    for (var i = 0; i <= hours.length; i++) {
-        var row = table.insertRow(i);
+    var headRow = table.insertRow(0);
+    headRow.insertCell(0); 
+    days.forEach(day => {
+        var cell = headRow.insertCell();
+        cell.innerHTML = day;
+    });
 
-        for (var j = 0; j <= days.length; j++) {
-            var cell = row.insertCell(j);
+    hours.forEach((hour, i) => {
+        var row = table.insertRow(-1);
+        var timeCell = row.insertCell(0);
+        timeCell.innerHTML = hour;
 
-            if (i === 0) {
-                cell.innerHTML = j > 0 ? days[j - 1] : '';
-            } else if (j === 0) {
-                cell.innerHTML = hours[i - 1];
+        days.forEach((day, j) => {
+            var cell = row.insertCell(-1);
+            if (j === 5 && i > 10) { 
+                cell.innerHTML = 'Cerrado';
             } else {
-                if (j == 6 && i > 11) {
-                    cell.innerHTML = 'Cerrado';
-                } else {
-                    cell.innerHTML = '<button onclick="openForm()">Reservar</button>';
-                }
+                cell.innerHTML = `<button data-day="${day}" data-hour="${hour}" onclick="openForm(this)">Reservar</button>`;
             }
-        }
-    }
+        });
+    });
 };
 
-function openForm(day, hour) {
+function openForm(button) {
+    var day = button.getAttribute('data-day');
+    var hour = button.getAttribute('data-hour');
+
     fetch('/reservarcita', {
         method: 'POST',
         headers: {
@@ -39,7 +43,7 @@ function openForm(day, hour) {
             alert('Reserva realizada con éxito');
             location.reload();
         } else {
-            alert('No se pudo realizar la reserva');
+            alert(data.message || 'No se pudo realizar la reserva');
         }
     })
     .catch((error) => {

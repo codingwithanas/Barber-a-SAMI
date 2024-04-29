@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
 import openai
 import os
@@ -15,11 +16,11 @@ db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-
 def connect_db():
     return connect(db_url)
 
-# Configura la API key de OpenAI
+# API key de OpenAI
 
-# Ruta principal
 @app.route('/')
 def index():
+    print(session)
     if 'users' in session:
         username = session['users']
         return render_template('index.html', username=username)
@@ -31,26 +32,34 @@ def estils():
 
 @app.route('/reservar')
 def reservar():
-        return render_template('reservar.html')
+    print(session)
+    if 'users' in session:
+        username = session['users']
+        return render_template('reservar.html', username=username)
+    return render_template('reservar.html')
+    
+@app.route('/galeria')
+def galeria():
+        return render_template('galeria.html')
 
-# Ruta para el inicio de sesión
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form['loginEmail']
     password = request.form['loginPassword']
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute("SELECT name FROM users WHERE email=%s AND password=%s", (email, password))
+    cursor.execute("SELECT id, name FROM users WHERE email=%s AND password=%s", (email, password))
     user = cursor.fetchone()
     cursor.close()
     connection.close()
     if user:
-        session['user'] = user[0]
+        session['users'] = user[1]
+        session['user_id'] = user[0]
+        print(session)
         return jsonify({'message': 'Login successful'})
     else:
         return jsonify({'error': 'Invalid email or password'})
 
-# Ruta para el registro de usuarios
 @app.route('/register', methods=['POST'])
 def register():
     name = request.form['registerName']
@@ -67,7 +76,6 @@ def register():
     except IntegrityError:
         return jsonify({'error': 'Email already exists'})
 
-# Ruta para cerrar sesión
 @app.route('/logout')
 def logout():
     session.pop('users', None)
@@ -91,13 +99,18 @@ def chatbot():
     )
 
     return jsonify({'respuesta': respuesta['choices'][0]['message']['content'].strip()})
+
 @app.route('/reservarcita', methods=['POST'])
 def reservarcita():
-    if 'users' not in session:
+    if 'user_id' not in session:
         return jsonify(success=False, message="No hay ninguna sesión iniciada")
 
-    username = session['users']
+    user_id = session['user_id']
     data = request.get_json()
+    print(data)
+    if 'day' not in data or 'hour' not in data:
+        return jsonify(success=False, message="Faltan datos necesarios (día u hora)")
+
     day = data['day']
     hour = data['hour']
 
@@ -105,15 +118,18 @@ def reservarcita():
     cur = conn.cursor()
 
     try:
-        cur.execute(sql.SQL("INSERT INTO Reservas (dia, hora, usuario_id) SELECT %s, %s, id FROM users WHERE name = %s"), (day, hour, username))
-        conn.commit()
-        return jsonify(success=True)
+        cur.execute("INSERT INTO Reservas (dia, hora, usuario_id) VALUES (%s, %s, %s)", (day, hour, user_id))
+        if cur.rowcount > 0:
+            conn.commit()
+            return jsonify(success=True)
+        else:
+            return jsonify(success=False, message="No se encontró el usuario")
     except Exception as e:
         print(e)
         return jsonify(success=False, message="No se pudo realizar la reserva")
-
     finally:
         cur.close()
         conn.close()
+        
 if __name__ == '__main__':
     app.run(debug=True)
