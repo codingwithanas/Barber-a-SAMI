@@ -1,36 +1,39 @@
-<!-- reservar.html -->
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservas - Barbería SAMI</title>
-    <link rel="stylesheet" href="../static/css/styles.css"> 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        body {
+            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
 </head>
+
 <body>
-
     {% include 'navbar.html' %}
-
-    <div class="container">
+    {% include 'login.html' %}
+    {% include 'register.html' %}
+    <div class="container mt-5 bg-light p-4 rounded">
         <h1>Reservas</h1>
-        <p>Por favor, complete el siguiente formulario para reservar su cita:</p>
-        <form id="reservasForm">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required>
-            <label for="email">Correo Electrónico:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="telefono">Teléfono:</label>
-            <input type="tel" id="telefono" name="telefono" required>
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" required>
-            <label for="hora">Hora:</label>
-            <input type="time" id="hora" name="hora" required>
-            <button type="submit">Reservar</button>
-        </form>
+        <p class="mt-4">Por favor, seleccione una hora para reservar su cita:</p>
+        <table id="reservasTable" class="table table-bordered">
+        </table>
     </div>
-
     {% include 'footer.html' %}
 
+    <script src="../static/js/reservas.js" defer></script>
     <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
+
 </body>
+
 </html>

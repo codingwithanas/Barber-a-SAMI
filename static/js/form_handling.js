@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Función para manejar el envío del formulario de inicio de sesión
     document.getElementById('loginForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const formData = new FormData(this);
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error:', error));
     });
 
-    // Función para manejar el envío del formulario de registro
     document.getElementById('registerForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const formData = new FormData(this);

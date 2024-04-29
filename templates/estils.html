@@ -1,44 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería SAMI - Estilos</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/style_chatbot.css"> <!-- Enlazar el archivo de estilos.css -->
+    <link rel="stylesheet" href="../static/css/style_chatbot.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+
 </head>
+
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Barbería SAMI</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Servicios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Galería</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contacto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Estilos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="loginBtn">Inicia sesión</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
+    {% include 'login.html' %}
+    {% include 'register.html' %}
 
     <div class="container">
         <h1>Identifica tu Corte</h1>
@@ -83,16 +60,10 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="container">
-            <ul class="list-inline">
-                <li class="list-inline-item"><a href="#">Política de Privacidad</a></li>
-                <li class="list-inline-item"><a href="#">Aviso Legal</a></li>
-            </ul>
-        </div>
-    </footer>
+    {% include 'footer.html' %}
 
     <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
     <script>
         function identificarCorte() {
             var tipoCabeza = document.getElementById('tipoCabeza').value;
@@ -103,19 +74,20 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ opcion1: tipoCabeza, opcion2: tipoCabello }) // Enviar las opciones seleccionadas
+                body: JSON.stringify({ opcion1: tipoCabeza, opcion2: tipoCabello }) 
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('recomendacionCorte').innerText = data.respuesta;
-                document.getElementById('respuestaChatbot').style.display = 'block';
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('recomendacionCorte').innerText = data.respuesta;
+                    document.getElementById('respuestaChatbot').style.display = 'block';
+                })
+                .catch(error => console.error('Error:', error));
         }
 
-        document.querySelector('#chatbotModal .close').addEventListener('click', function() {
+        document.querySelector('#chatbotModal .close').addEventListener('click', function () {
             document.getElementById('chatbotModal').style.display = 'none';
         });
-    </script> 
+    </script>
 </body>
+
 </html>

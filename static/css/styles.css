@@ -1,4 +1,3 @@
-/* Estilos generales */
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -15,12 +14,11 @@ body {
     max-width: 1200px;
 }
 
-/* Estilos de la barra de navegación */
-/* Estilos de la barra de navegación */
+
 .navbar {
     background-color: rgba(40, 40, 40, 0.8);
     color: #fff;
-    padding: 20px 0; /* Modifica el padding para ajustar el tamaño vertical del navbar */
+    padding: 20px 0;
     position: fixed;
     top: 0;
     width: 100%;
@@ -29,7 +27,6 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Asegura que el navbar sea visible al cargar la página */
 .navbar.visible {
     top: 0;
 }
@@ -63,7 +60,6 @@ body {
     background-color: #ffd700;
 }
 
-/* Estilos para los pop-ups */
 .modal {
     display: none;
     position: fixed;
@@ -101,7 +97,6 @@ body {
     cursor: pointer;
 }
 
-/* Estilos para los formularios dentro de los pop-ups */
 form {
     margin-top: 20px;
 }
@@ -135,8 +130,8 @@ button[type="submit"]:hover {
     background-color: #555;
 }
 
-/* Estilos para el footer */
 .footer {
+    margin-top: 20px;
     background-color: #282828;
     color: #fff;
     padding: 20px 0;
@@ -172,7 +167,6 @@ button[type="submit"]:hover {
     color: #ffd700;
 }
 
-/* Ajustes de responsividad para dispositivos móviles */
 @media (max-width: 768px) {
     .navbar ul {
         flex-direction: column;
@@ -213,6 +207,7 @@ button[type="submit"]:hover {
     from {
         transform: scale(1);
     }
+
     to {
         transform: scale(1.05);
     }
@@ -255,4 +250,49 @@ button[type="submit"]:hover {
 
 .hidden {
     display: none !important;
+}
+
+#reservasForm {
+    background-color: #f8f8f8;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+#reservasForm label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#reservasForm input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#reservasForm button {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#reservasTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#reservasTable td,
+#reservasTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#reservasTable th {
+    background-color: #333;
+    color: #fff;
 }
