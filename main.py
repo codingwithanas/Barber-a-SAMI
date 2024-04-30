@@ -43,6 +43,13 @@ def reservar():
 @app.route('/galeria')
 def galeria():
         return render_template('galeria.html')
+    
+@app.route('/mipanel')
+def mipanel():
+    if 'users' in session:
+        username = session['users']
+        return render_template('templates_paneles/panel_usuario.html', username=username)
+    return redirect(url_for('templates_paneles/panel_usuario.html'))
 
 @app.route('/login', methods=['POST'])
 def login():
