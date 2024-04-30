@@ -28,7 +28,9 @@ def index():
 
 @app.route('/estils')
 def estils():
-        return render_template('estils.html')
+    if 'users' in session:
+        username = session['users']
+        return render_template('estils.html', username=username)
 
 @app.route('/reservar')
 def reservar():
