@@ -19,16 +19,11 @@
 </head>
 
 <body>
-    {% include 'navbar.html' %}
-    {% include 'login.html' %}
-    {% include 'register.html' %}
-    <div class="container mt-5 bg-light p-4 rounded">
-        <h1>Reservas</h1>
-        <p class="mt-4">Por favor, seleccione una hora para reservar su cita:</p>
-        <table id="reservasTable" class="table table-bordered">
-        </table>
-    </div>
-    {% include 'footer.html' %}
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'sistema_reservas/reservas.html' %}
+    {% include 'includes/footer.html' %}
 
     <script src="../static/js/reservas.js" defer></script>
     <script src="../static/js/script.js" defer></script>
