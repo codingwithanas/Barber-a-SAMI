@@ -51,6 +51,46 @@ def mipanel():
         return render_template('templates_paneles/panel_usuario.html', username=username)
     return redirect(url_for('templates_paneles/panel_usuario.html'))
 
+@app.route('/changePassword', methods=['POST'])
+def change_password():
+    data = request.get_json()
+    current_password = data['currentPassword']
+    new_password = data['newPassword']
+    user_id = session['user_id']
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("SELECT password FROM users WHERE id=%s", (user_id,))
+    user = cursor.fetchone()
+    if user and user[0] == current_password:
+        cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
+        connection.commit()
+        return jsonify({'message': 'Password updated successfully'})
+    else:
+        return jsonify({'message': 'Current password is incorrect'}), 400
+    
+@app.route('/getCurrentEmail', methods=['GET'])
+def get_current_email():
+    user_id = session['user_id']
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("SELECT email FROM users WHERE id=%s", (user_id,))
+    user = cursor.fetchone()
+    if user:
+        return jsonify({'currentEmail': user[0]})
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+@app.route('/changeEmail', methods=['POST'])
+def change_email():
+    data = request.get_json()
+    new_email = data['newEmail']
+    user_id = session['user_id']
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("UPDATE users SET email=%s WHERE id=%s", (new_email, user_id))
+    connection.commit()
+    return jsonify({'message': 'Email updated successfully'})
+
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form['loginEmail']
