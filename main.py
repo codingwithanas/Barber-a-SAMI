@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
+from datetime import datetime, timedelta
 import openai
 import os
 app = Flask(__name__)
@@ -58,7 +59,7 @@ def get_reservas():
         user_id = session['user_id']
         connection = connect_db()
         cursor = connection.cursor()
-        cursor.execute("SELECT dia, hora FROM reservas WHERE usuario_id=%s", (user_id,))
+        cursor.execute("SELECT dia, hora, fecha_serva FROM reservas WHERE usuario_id=%s", (user_id,))
         reservas = cursor.fetchall()
         if reservas:
             return jsonify({'reservas': reservas})
@@ -176,28 +177,26 @@ def reservarcita():
     user_id = session['user_id']
     data = request.get_json()
     print(data)
-    if 'day' not in data or 'hour' not in data:
-        return jsonify(success=False, message="Faltan datos necesarios (día u hora)")
+    if 'day' not in data or 'hour' not in data or 'fecha_reserva' not in data:
+        return jsonify(success=False, message="Faltan datos necesarios (día, hora o fecha de reserva)")
 
-    day = data['day']
+    day = datetime.strptime(data['day'], "%m/%d/%Y")
     hour = data['hour']
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-    try:
-        cur.execute("INSERT INTO Reservas (dia, hora, usuario_id) VALUES (%s, %s, %s)", (day, hour, user_id))
-        if cur.rowcount > 0:
-            conn.commit()
-            return jsonify(success=True)
-        else:
-            return jsonify(success=False, message="No se encontró el usuario")
-    except Exception as e:
-        print(e)
-        return jsonify(success=False, message="No se pudo realizar la reserva")
-    finally:
-        cur.close()
-        conn.close()
+    fecha_reserva = datetime.strptime(data['fecha_reserva'], "%Y-%m-%d")
+    current_date = datetime.now()
+    future_date = current_date + timedelta(days=7)
+    if current_date <= day <= future_date:
+        conn = connect_db()
+        cur = conn.cursor()
+        try:
+            cur.execute("INSERT INTO Reservas (dia, hora, fecha_reserva, usuario_id) VALUES (%s, %s, CURRENT_DATE, %s)", (day, hour, user_id))
+            if cur.rowcount > 0:
+                conn.commit()
+                return jsonify(success=True)
+        except Exception as e:
+            return jsonify(success=False, message=str(e))
+    else:
+        return jsonify(success=False, message="La fecha de reserva está fuera del rango permitido")
         
 if __name__ == '__main__':
     app.run(debug=True)

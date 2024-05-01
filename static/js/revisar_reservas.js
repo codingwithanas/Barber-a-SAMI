@@ -13,25 +13,20 @@ $(document).ready(function() {
             reservationsList.empty();
 
             if (data.reservas && data.reservas.length > 0) {
+                noReservationsMessage.hide();
                 $.each(data.reservas, function(index, reserva) {
                     var day = reserva[0];
                     var hour = reserva[1];
-                    var reservationItem = $('<li>').addClass('list-group-item').text(day + ' a las ' + hour);
+                    var fecha_reserva = reserva[2];
+                    var reservationItem = $('<li>').addClass('list-group-item').text(day + ' a las ' + hour + ', reservado el ' + fecha_reserva);
                     reservationsList.append(reservationItem);
                 });
-
-                var modifyReservationButton = $('<button>').addClass('btn btn-primary mt-3').text('Modificar Reserva').click(function() {
-              
-                });
-
-                reservationsList.after(modifyReservationButton); 
             } else {
-                noReservationsMessage.show(); 
+                noReservationsMessage.show();
             }
         },
         error: function(error) {
-            console.error('Error:', error);
-            noReservationsMessage.show(); 
+            console.log(error);
         }
     });
 });

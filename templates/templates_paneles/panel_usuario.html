@@ -70,7 +70,7 @@
                     <div class="card-body">
                         <ul id="reservationsList" class="list-group">
                             {% for reserva in reservas %}
-                            <li class="list-group-item">{{ reserva[0] }} a las {{ reserva[1] }}</li>
+                            <li class="list-group-item">{{ reserva[0] }} a las {{ reserva[1] }}, reservado el {{ reserva[2] }}</li>
                             <button onclick="modificarReserva()" class="btn btn-primary mt-3">Modificar Reserva</button>
                             {% endfor %}
                         </ul>

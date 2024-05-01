@@ -20,8 +20,9 @@ window.onload = function () {
             if (j === 5 && i > 10) {
                 cell.innerHTML = 'Cerrado';
             } else {
-                cell.innerHTML = `<button data-day="${day}" data-hour="${hour}" onclick="openForm(this)">Reservar</button>`;
-            } 
+                var fecha_reserva = new Date().toISOString().split('T')[0];
+                cell.innerHTML = `<button data-day="${day}" data-hour="${hour}" data-fecha-reserva="${fecha_reserva}" onclick="openForm(this)">Reservar</button>`;
+            }
         });
     });
 };
@@ -29,13 +30,14 @@ window.onload = function () {
 function openForm(button) {
     var day = button.getAttribute('data-day');
     var hour = button.getAttribute('data-hour');
+    var fecha_reserva = new Date().toISOString().split('T')[0];
 
     fetch('/reservarcita', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ day: day, hour: hour }),
+        body: JSON.stringify({ day: day, hour: hour, fecha_reserva: fecha_reserva }),
     })
         .then(response => response.json())
         .then(data => {
