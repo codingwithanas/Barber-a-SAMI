@@ -8,14 +8,22 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/style_chatbot.css">
     <link rel="stylesheet" href="../static/css/styles.css">
-
+    <style>
+        body {
+            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
 </head>
 
 <body>
 
-    {% include 'navbar.html' %}
-    {% include 'login.html' %}
-    {% include 'register.html' %}
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
 
     <div class="container">
         <h1>Identifica tu Corte</h1>
@@ -60,7 +68,7 @@
         </div>
     </div>
 
-    {% include 'footer.html' %}
+    {% include 'includes/footer.html' %}
 
     <script src="../static/js/script.js" defer></script>
     <script src="../static/js/form_handling.js" defer></script>
@@ -74,7 +82,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ opcion1: tipoCabeza, opcion2: tipoCabello }) 
+                body: JSON.stringify({ opcion1: tipoCabeza, opcion2: tipoCabello })
             })
                 .then(response => response.json())
                 .then(data => {

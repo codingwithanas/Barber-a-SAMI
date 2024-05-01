@@ -50,6 +50,25 @@ def mipanel():
         username = session['users']
         return render_template('templates_paneles/panel_usuario.html', username=username)
     return redirect(url_for('templates_paneles/panel_usuario.html'))
+@app.route('/getReservas', methods=['GET'])
+def get_reservas():
+    try:
+        if 'user_id' not in session:
+            return jsonify({'message': 'Usuario no autenticado'}), 401
+        user_id = session['user_id']
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT dia, hora FROM reservas WHERE usuario_id=%s", (user_id,))
+        reservas = cursor.fetchall()
+        if reservas:
+            return jsonify({'reservas': reservas})
+        else:
+            return jsonify({'message': 'No hay reservas'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():

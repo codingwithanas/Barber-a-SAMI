@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    {% include './navbar.html' %}
+    {% include './includes/navbar.html' %}
 
     <main class="container mt-5">
         <h1 class="mb-5">Panel de Usuario</h1>
@@ -68,15 +68,14 @@
                 <div class="card">
                     <div class="card-header">Tus Reservas</div>
                     <div class="card-body">
-                        {% if reservas %}
                         <ul id="reservationsList" class="list-group">
                             {% for reserva in reservas %}
-                            <li class="list-group-item">{{ reserva.day }} a las {{ reserva.hour }}</li>
+                            <li class="list-group-item">{{ reserva[0] }} a las {{ reserva[1] }}</li>
+                            <button onclick="modificarReserva()" class="btn btn-primary mt-3">Modificar Reserva</button>
                             {% endfor %}
                         </ul>
-                        <button onclick="modificarReserva()" class="btn btn-primary mt-3">Modificar Reserva</button>
-                        {% else %}
-                        <p>No tienes reservas actualmente.</p>
+                        {% if not reservas %}
+                        <p id="noReservationsMessage" style="display: none;">No tienes reservas actualmente.</p>
                         {% endif %}
                     </div>
                 </div>
@@ -84,11 +83,13 @@
         </div>
     </main>
 
-    {% include './footer.html' %}
+    {% include './includes/footer.html' %}
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="/static/js/script.js"></script>
     <script src="/static/js/form_handling.js"></script>
     <script src="/static/js/cambio_datos.js"></script>
+    <script src="/static/js/revisar_reservas.js"></script>
 </body>
 
 </html>

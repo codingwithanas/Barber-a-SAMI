@@ -10,15 +10,10 @@
 </head>
 
 <body>
-
-
-    {% include 'navbar.html' %}
-    {% include 'login.html' %}
-    {% include 'register.html' %}
-
-    <div id="backToTop" class="back-to-top" style="display: none;">
-        <a href="javascript:void(0);">↑</a>
-    </div>
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'includes/backtotop.html' %}
     <div class="slider">
         <div class="slide" style="background-image: url('/static/assets/Barberia1.jpeg');">
             <div class="slide-content">
@@ -33,7 +28,7 @@
             </div>
         </div>
     </div>
-    {% include 'footer.html' %}
+    {% include 'includes/footer.html' %}
 
 
     <script src="../static/js/script.js" defer></script>
