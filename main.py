@@ -223,7 +223,7 @@ def notificacion():
     
 @app.route('/contacto', methods=['POST'])
 def contacto():
-
+    
     conn = connect_db(
         db_user='fl0user',
         db_password='QX2Bg8JoaRvG',
@@ -256,6 +256,21 @@ def contacto():
     conn.commit()
 
     return jsonify(success=True, message="Mensaje enviado")
+    
+    return render_template('contacto.html')
+
+@app.route('/reviews', methods=['GET', 'POST'])
+def reviews():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        rating = request.form.get('rating')
+        comentario = request.form.get('comment')
+
+        return jsonify(success=True, message="Comentario y calificación añadidos")
+    else:
+        return render_template('Valoraciones.html')
         
 if __name__ == '__main__':
     app.run(debug=True)
