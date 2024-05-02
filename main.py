@@ -199,5 +199,28 @@ def reservarcita():
         cur.close()
         conn.close()
         
+@app.route('/notificacion', methods=['GET'])
+def notificacion():
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No hay ninguna sesión iniciada")
+
+    user_id = session['user_id']
+    conn = connect_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM Reservas WHERE usuario_id = %s", (user_id,))
+    reservations = cur.fetchall()
+    
+    if reservations:
+        cur.execute("SELECT notification_shown FROM users WHERE id = %s", (user_id,))
+        notification_shown = cur.fetchone()[0]
+        
+        if not notification_shown:
+            cur.execute("UPDATE users SET notification_shown = TRUE WHERE id = %s", (user_id,))
+            conn.commit()
+            return jsonify(success=True, message="Tienes nuevas reservas!")
+    else:
+        return jsonify(success=True, message="No tienes nuevas reservas.")
+        
 if __name__ == '__main__':
     app.run(debug=True)

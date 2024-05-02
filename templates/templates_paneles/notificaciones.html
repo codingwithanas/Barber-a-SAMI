@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notificaciones</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Notificaciones</h1>
+    <p id="message"></p>
+
+    <script>
+    $(document).ready(function() {
+        $.get("/notificacion", function(data) {
+            $("#message").text(data.message);
+        });
+    });
+    </script>
+</body>
+</html>
