@@ -1,16 +1,22 @@
-var reviews = [
-    { name: 'Usuario 1', review: 'Esta es la reseña del usuario 1', rating: 5 },
-    { name: 'Usuario 2', review: 'Esta es la reseña del usuario 2', rating: 4 },
+// Supongamos que tienes un array de comentarios
+var comments = [
+    { name: 'Usuario 1', comment: 'Este es el comentario del usuario 1' },
+    { name: 'Usuario 2', comment: 'Este es el comentario del usuario 2' },
+    // Añade más comentarios aquí
 ];
 
-var reviewsContainer = document.getElementById('existing-reviews');
+// Encuentra el contenedor de comentarios en la página
+var commentsContainer = document.getElementById('existing-reviews');
 
-reviews.forEach(function(review) {
-    var reviewDiv = document.createElement('div');
+// Itera sobre los comentarios y añade cada uno al contenedor de comentarios
+comments.forEach(function(comment) {
+    // Crea un nuevo elemento div para el comentario
+    var commentDiv = document.createElement('div');
 
-    reviewDiv.innerHTML = '<h3>' + review.name + '</h3>' +
-                          '<p>' + review.review + '</p>' +
-                          '<p>Calificación: ' + review.rating + '/5</p>';
+    // Añade el nombre y el comentario al div
+    commentDiv.innerHTML = '<h3>' + comment.name + '</h3>' +
+                           '<p>' + comment.comment + '</p>';
 
-    reviewsContainer.appendChild(reviewDiv);
+    // Añade el div del comentario al contenedor de comentarios
+    commentsContainer.appendChild(commentDiv);
 });
