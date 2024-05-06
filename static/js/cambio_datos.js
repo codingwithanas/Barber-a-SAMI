@@ -22,7 +22,11 @@ document.getElementById('changePasswordForm').addEventListener('submit', event =
     event.preventDefault();
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
-    sendAjaxRequest('/changePassword', { currentPassword, newPassword });
+    if(newPassword.length < 6){
+        alert("La nueva contraseña debe tener al menos 6 caracteres.");
+    } else {
+        sendAjaxRequest('/changePassword', { currentPassword, newPassword });
+    }
 });
 
 document.getElementById('changeEmailForm').addEventListener('submit', event => {
