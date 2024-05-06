@@ -3,6 +3,8 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from psycopg2 import connect, IntegrityError, sql
 import openai
 import os
+import hashlib
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 db_user = 'fl0user'
@@ -75,17 +77,19 @@ def change_password():
     data = request.get_json()
     current_password = data['currentPassword']
     new_password = data['newPassword']
+    new_password = hashlib.md5(new_password.encode()).hexdigest()
     user_id = session['user_id']
     connection = connect_db()
     cursor = connection.cursor()
     cursor.execute("SELECT password FROM users WHERE id=%s", (user_id,))
     user = cursor.fetchone()
-    if user and user[0] == current_password:
-        cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
-        connection.commit()
-        return jsonify({'message': 'Password updated successfully'})
+    hashed_current_password = hashlib.md5(current_password.encode()).hexdigest()
+    if user and user[0] == hashed_current_password:
+            cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
+            connection.commit()
+            return jsonify({'message': 'Password updated successfully'})
     else:
-        return jsonify({'message': 'Current password is incorrect'}), 400
+            return jsonify({'message': 'Current password is incorrect'}), 400
     
 @app.route('/getCurrentEmail', methods=['GET'])
 def get_current_email():
@@ -116,11 +120,11 @@ def login():
     password = request.form['loginPassword']
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute("SELECT id, name FROM users WHERE email=%s AND password=%s", (email, password))
+    cursor.execute("SELECT id, name, password FROM users WHERE email=%s", (email,))
     user = cursor.fetchone()
     cursor.close()
     connection.close()
-    if user:
+    if user and hashlib.md5(password.encode()).hexdigest() == user[2]:
         session['users'] = user[1]
         session['user_id'] = user[0]
         print(session)
@@ -128,21 +132,24 @@ def login():
     else:
         return jsonify({'error': 'Invalid email or password'})
 
+
 @app.route('/register', methods=['POST'])
 def register():
     name = request.form['registerName']
     email = request.form['registerEmail']
     password = request.form['registerPassword']
+    hashed_password = hashlib.md5(password.encode()).hexdigest()
     try:
         connection = connect_db()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, password))
+        cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
         connection.commit()
         cursor.close()
         connection.close()
         return jsonify({'message': 'Registration successful'})
     except IntegrityError:
         return jsonify({'error': 'Email already exists'})
+
 
 @app.route('/logout')
 def logout():
