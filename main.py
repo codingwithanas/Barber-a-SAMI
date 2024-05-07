@@ -202,5 +202,29 @@ def reservarcita():
         cur.close()
         conn.close()    
         
+
+@app.route('/contacto', methods=['GET', 'POST'])
+def contacto_form():
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
+        telefono = request.form.get('telefono')
+        asunto = request.form.get('asunto')
+        mensaje = request.form.get('mensaje')
+
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO correocontacto (nombre, email, telefono, asunto, mensaje) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (nombre, email, telefono, asunto, mensaje))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify(success=True, message="Mensaje enviado")
+    else:
+        return render_template('contacto.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
