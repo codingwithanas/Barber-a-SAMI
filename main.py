@@ -59,13 +59,13 @@ def contacto():
         return render_template('contacto.html', username=username)
     return render_template('contacto.html')
     
-@app.route('/valoraciones')
-def valoraciones():
+@app.route('/resenas')
+def resenas():
     print(session)
     if 'users' in session:
         username = session['users']
-        return render_template('valoraciones.html', username=username)
-    return render_template('valoraciones.html')
+        return render_template('resenas.html', username=username)
+    return render_template('resenas.html')
     
 @app.route('/mipanel')
 def mipanel():
@@ -245,6 +245,28 @@ def contacto_form():
         return jsonify(success=True, message="Mensaje enviado")
     else:
         return render_template('contacto.html')
+    
+@app.route('/valoraciones', methods=['GET', 'POST'])
+def valoraciones_form():
+    if request.method == 'POST':
+        nombre = request.form.get('name')
+        email = session.get('email')
+        valoracion = request.form.get('rating')
+        comentario = request.form.get('review')
+
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO valoraciones (nombre, email, valoracion, comentario) 
+            VALUES (%s, %s, %s, %s)
+        """, (nombre, email, valoracion, comentario))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify(success=True, message="Valoración enviada")
+    else:
+        return render_template('valoraciones.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
