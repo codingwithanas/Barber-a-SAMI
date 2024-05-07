@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valoraciones</title>
-    <link rel="stylesheet" href="../static/css/styles.css"> <!-- Enlazar tu archivo de estilos CSS -->
+    <title>Barbería SAMI</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -151,99 +153,49 @@
         }
     </style>
 </head>
+
 <body>
-
-    <!-- Barra de navegación -->
-    <nav class="navbar">
-        <div class="container">
-            <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Servicios</a></li>
-                <li><a href="#">Contacto</a></li>
-                <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Iniciar Sesión - Pop-up -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Iniciar Sesión</h2>
-            <form id="loginForm">
-                <label for="loginEmail">Correo Electrónico:</label>
-                <input type="email" id="loginEmail" name="loginEmail" required>
-                <label for="loginPassword">Contraseña:</label>
-                <input type="password" id="loginPassword" name="loginPassword" required>
-                <button type="submit">Iniciar Sesión</button>
-            </form>
-            <p><a href="#" id="registerLink">¿No estás registrado?</a></p>
-        </div>
-    </div>
-
-    <!-- Registrarse - Pop-up -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Registrarse</h2>
-            <form id="registerForm">
-                <label for="registerName">Nombre:</label>
-                <input type="text" id="registerName" name="registerName" required>
-                <label for="registerEmail">Correo Electrónico:</label>
-                <input type="email" id="registerEmail" name="registerEmail" required>
-                <label for="registerPassword">Contraseña:</label>
-                <input type="password" id="registerPassword" name="registerPassword" required>
-                <button type="submit">Registrarse</button>
-            </form>
-            <!-- Botón de volver atrás -->
-            <br>
-            ¿Tienes cuenta? <a href="#" id="backToLogin">Volver atrás</a>
-        </div>
-    </div>
-    <div id="backToTop" class="back-to-top" style="display: none;">
-        <a href="javascript:void(0);">↑</a>
-    </div>
-
-    <!-- Contenido de Valoraciones -->
-<section id="reviews">
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'includes/backtotop.html' %}
     <div class="container">
-        <!-- Formulario para agregar un nuevo comentario -->
+        <h1>Valoraciones</h1>
+        <div class="star-rating">
+            <input type="radio" name="rating" id="rating-5">
+            <label for="rating-5">★</label>
+            <input type="radio" name="rating" id="rating-4">
+            <label for="rating-4">★</label>
+            <input type="radio" name="rating" id="rating-3">
+            <label for="rating-3">★</label>
+            <input type="radio" name="rating" id="rating-2">
+            <label for="rating-2">★</label>
+            <input type="radio" name="rating" id="rating-1">
+            <label for="rating-1">★</label>
+        </div>
         <div id="new-review-form">
-            <h2>Añade tu comentario</h2>
-            <form>
-                <div class="star-rating">
-                    <input id="star5" name="rating" type="radio" value="5" required><label for="star5">★</label>
-                    <input id="star4" name="rating" type="radio" value="4" required><label for="star4">★</label>
-                    <input id="star3" name="rating" type="radio" value="3" required><label for="star3">★</label>
-                    <input id="star2" name="rating" type="radio" value="2" required><label for="star2">★</label>
-                    <input id="star1" name="rating" type="radio" value="1" required><label for="star1">★</label>
-                </div>
-        
-                <label for="comment">Comentario:</label>
-                <textarea id="comment" name="comment" required></textarea>
-        
+            <h2>Deja tu valoración</h2>
+            <form action="/valoraciones" method="POST">
+                <label for="name">Nombre:</label>
+                <input type="text" name="name" id="name" required>
+                <label for="review">Valoración:</label>
+                <textarea name="review" id="review" required></textarea>
                 <input type="submit" value="Enviar">
             </form>
         </div>
-
-        <!-- Aquí se mostrarán los comentarios existentes -->
-        <div id="existing-reviews">
-            <!-- Los comentarios se agregarán aquí dinámicamente -->
+        <div id="reviews">
+            {% for review in reviews %}
+            <div class="review">
+                <h3>{{ review.name }}</h3>
+                <p>{{ review.review }}</p>
+            </div>
+            {% endfor %}
         </div>
-    </div>
-</section>
+    {% include 'includes/footer.html' %}
 
-    <div class="footer">
-        <div class="container">
-            <ul>
-                <li><a href="#">Política de Privacidad</a></li>
-                <li><a href="#">Aviso Legal</a></li>
-            </ul>
-        </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="../static/js/valoraciones.js" defer></script> <!-- Asegúrate de que la ruta sea correcta -->
-
+    <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
 </body>
+
 </html>

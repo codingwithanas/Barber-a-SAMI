@@ -1,11 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+    <title>Barbería SAMI</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
     
+</head>
+
+<body>
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'includes/backtotop.html' %}
+    <!-- Contenido de Servicios -->
+    <section class="services">
+        <div class="container">
+            <div class="panel">
+                <div class="slide-content">
+                    <h2>Nuestros Servicios</h2>
+                    <p>En nuestra peluquería ofrecemos una amplia gama de servicios para satisfacer tus necesidades de cuidado capilar. Desde cortes de pelo hasta tratamientos de coloración, contamos con profesionales dedicados a brindarte la mejor experiencia.</p>
+                    
+                    <!-- Lista de Servicios -->
+                    <ul class="service-list">
+                        <li>
+                            <h3>Corte de Pelo</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <li>
+                            <h3>Lavado y Peinado</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <li>
+                            <h3>Arreglo de Barba</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <li>
+                            <h3>Arreglo de Cejas</h3>
+                            <p>Precio: $XX</p>
+                        </li>
+                        <!-- Agrega más servicios aquí -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% include 'includes/footer.html' %}
+
+
+    <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
 </body>
+
 </html>
