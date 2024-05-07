@@ -41,7 +41,11 @@ def reservar():
 
 @app.route('/servicios')
 def servicios():
-        return render_template('servicios.html')
+    print(session)
+    if 'users' in session:
+        username = session['users']
+        return render_template('servicios.html', username=username)
+    return render_template('servicios.html')
     
 @app.route('/galeria')
 def galeria():
@@ -49,11 +53,19 @@ def galeria():
 
 @app.route('/contact')
 def contacto():
-        return render_template('contacto.html')
+    print(session)
+    if 'users' in session:
+        username = session['users']
+        return render_template('contacto.html', username=username)
+    return render_template('contacto.html')
     
 @app.route('/valoraciones')
 def valoraciones():
-        return render_template('valoraciones.html')
+    print(session)
+    if 'users' in session:
+        username = session['users']
+        return render_template('valoraciones.html', username=username)
+    return render_template('valoraciones.html')
     
 @app.route('/mipanel')
 def mipanel():
