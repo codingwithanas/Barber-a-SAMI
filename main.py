@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
-import openai
 import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -43,6 +42,10 @@ def reservar():
 @app.route('/galeria')
 def galeria():
         return render_template('galeria.html')
+
+@app.route('/contact')
+def contacto():
+        return render_template('contacto.html')
     
 @app.route('/mipanel')
 def mipanel():
@@ -197,45 +200,7 @@ def reservarcita():
         return jsonify(success=False, message="No se pudo realizar la reserva")
     finally:
         cur.close()
-        conn.close()
-
-@app.route('/contacto', methods=['POST'])
-def contacto():
-    
-    conn = connect_db(
-        db_user='fl0user',
-        db_password='QX2Bg8JoaRvG',
-        db_host='ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io',
-        db_name='dbanasimario',
-        db_port='5432'
-    )
-    cur = conn.cursor()
-
-    nombre = request.form.get('name')
-    email = request.form.get('email')
-    telefono = request.form.get('phone')
-    asunto = request.form.get('subject')
-    mensaje = request.form.get('comments')
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS correocontacto (
-            nombre TEXT,
-            email TEXT,
-            telefono TEXT,
-            asunto TEXT,
-            mensaje TEXT
-        )
-    """)
-
-    cur.execute("""
-        INSERT INTO correocontacto (nombre, email, telefono, asunto, mensaje) 
-        VALUES (%s, %s, %s, %s, %s)
-    """, (nombre, email, telefono, asunto, mensaje))
-    conn.commit()
-
-    return jsonify(success=True, message="Mensaje enviado")
-    
-    return render_template('contacto.html')
+        conn.close()    
         
 if __name__ == '__main__':
     app.run(debug=True)
