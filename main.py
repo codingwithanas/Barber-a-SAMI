@@ -2,8 +2,11 @@ from flask import Flask, request, jsonify, render_template, session, redirect, u
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
 import openai
+from config import API_KEY
 import os
 import hashlib
+
+openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -17,8 +20,6 @@ db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-
 
 def connect_db():
     return connect(db_url)
-
-# API key de OpenAI
 
 @app.route('/')
 def index():
