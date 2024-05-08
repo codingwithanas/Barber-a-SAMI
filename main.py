@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
@@ -15,8 +16,10 @@ db_password = 'QX2Bg8JoaRvG'
 db_host = 'ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io'
 db_name = 'dbanasimario'
 db_port = '5432'
-
 db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io:5432/dbanasimario?sslmode=require"
+
+
+chatbot_requests = {}
 
 def connect_db():
     return connect(db_url)
@@ -159,6 +162,12 @@ def logout():
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
+    user_id = session.get('user_id')
+    user_requests = chatbot_requests.get(user_id, {})
+    today = date.today().isoformat()
+    if user_requests.get(today, 0) >= 3:
+        return jsonify({'error': 'Has alcanzado el límite de solicitudes de chatbot para hoy'}), 429
+
     data = request.json
     opcion1 = data.get('opcion1')
     opcion2 = data.get('opcion2')
@@ -171,7 +180,8 @@ def chatbot():
         temperature=0.5,
         max_tokens=100
     )
-
+    user_requests[today] = user_requests.get(today, 0) + 1
+    chatbot_requests[user_id] = user_requests
     return jsonify({'respuesta': respuesta['choices'][0]['message']['content'].strip()})
 
 @app.route('/reservarcita', methods=['POST'])
