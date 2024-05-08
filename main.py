@@ -162,9 +162,7 @@ def chatbot():
     data = request.json
     opcion1 = data.get('opcion1')
     opcion2 = data.get('opcion2')
-
-    pregunta = f"El usuario está buscando un nuevo corte de cabello y está eligiendo entre dos estilos específicos: {opcion1} y {opcion2}. Dadas estas opciones, ¿cuál crees que sería el mejor corte de cabello para alguien con cabello?"
-    
+    pregunta = f"El usuario tiene una cabeza {opcion1} y cabello {opcion2}. Dado su tipo de cabeza y cabello, ¿cuál sería el corte de cabello más adecuado para él? Por favor, responde con un solo tipo de corte de cabello, por ejemplo: 'Buzz Cut'."    
     respuesta = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
