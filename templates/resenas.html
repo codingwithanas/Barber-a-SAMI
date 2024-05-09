@@ -14,7 +14,14 @@
     {% include 'includes/login.html' %}
     {% include 'includes/register.html' %}
     {% include 'includes/backtotop.html' %}
-
+    {% for valoracion in valoraciones %}
+    <div class="valoracion">
+        <h3>{{ valoracion[0] }}</h3>
+        <p>{{ valoracion[1] }} estrellas</p>
+        <p>{{ valoracion[2] }}</p>
+        <p>Numero de valoraciones: {{ valoraciones|length }}</p>
+    </div>
+    {% endfor %}
     {% include 'includes/footer.html' %}
 
 
