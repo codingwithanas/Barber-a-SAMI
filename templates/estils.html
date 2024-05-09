@@ -86,7 +86,13 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('recomendacionCorte').innerText = data.respuesta;
+                    if (data.error) {
+                        // Si hay un error, mostrar el mensaje de error en lugar de la respuesta
+                        document.getElementById('recomendacionCorte').innerText = data.error;
+                    } else {
+                        // Si no hay error, mostrar la respuesta del chatbot
+                        document.getElementById('recomendacionCorte').innerText = data.respuesta;
+                    }
                     document.getElementById('respuestaChatbot').style.display = 'block';
                 })
                 .catch(error => console.error('Error:', error));

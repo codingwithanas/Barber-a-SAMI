@@ -1,9 +1,13 @@
+from datetime import date
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
 import openai
+from config import API_KEY
 import os
 import hashlib
+
+openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -12,13 +16,13 @@ db_password = 'QX2Bg8JoaRvG'
 db_host = 'ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io'
 db_name = 'dbanasimario'
 db_port = '5432'
-
 db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io:5432/dbanasimario?sslmode=require"
+
+
+chatbot_requests = {}
 
 def connect_db():
     return connect(db_url)
-
-# API key de OpenAI
 
 @app.route('/')
 def index():
@@ -71,7 +75,7 @@ def get_reservas():
     finally:
         cursor.close()
         connection.close()
-
+        
 @app.route('/changePassword', methods=['POST'])
 def change_password():
     data = request.get_json()
@@ -158,12 +162,16 @@ def logout():
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
+    user_id = session.get('user_id')
+    user_requests = chatbot_requests.get(user_id, {})
+    today = date.today().isoformat()
+    if user_requests.get(today, 0) >= 3:
+        return jsonify({'error': 'Has alcanzado el límite de solicitudes de chatbot para hoy'}), 429
+
     data = request.json
     opcion1 = data.get('opcion1')
     opcion2 = data.get('opcion2')
-
-    pregunta = f"El usuario está buscando un nuevo corte de cabello y está eligiendo entre dos estilos específicos: {opcion1} y {opcion2}. Dadas estas opciones, ¿cuál crees que sería el mejor corte de cabello para alguien con cabello?"
-    
+    pregunta = f"El usuario tiene una cabeza {opcion1} y cabello {opcion2}. Dado su tipo de cabeza y cabello, ¿cuál sería el corte de cabello más adecuado para él? Por favor, responde con un solo tipo de corte de cabello, por ejemplo: 'Buzz Cut'."    
     respuesta = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -172,7 +180,8 @@ def chatbot():
         temperature=0.5,
         max_tokens=100
     )
-
+    user_requests[today] = user_requests.get(today, 0) + 1
+    chatbot_requests[user_id] = user_requests
     return jsonify({'respuesta': respuesta['choices'][0]['message']['content'].strip()})
 
 @app.route('/reservarcita', methods=['POST'])
