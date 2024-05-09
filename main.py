@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -192,17 +193,18 @@ def reservarcita():
     user_id = session['user_id']
     data = request.get_json()
     print(data)
-    if 'day' not in data or 'hour' not in data:
-        return jsonify(success=False, message="Faltan datos necesarios (día u hora)")
+    if 'datetime' not in data:
+        return jsonify(success=False, message="Faltan datos necesarios (fecha y hora)")
 
-    day = data['day']
-    hour = data['hour']
-
+    datetime_str = data['datetime']
+    datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+    day_of_week = datetime_obj.strftime("%A") 
+    hour_of_day = datetime_obj.strftime("%H:%M")  
     conn = connect_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("INSERT INTO Reservas (dia, hora, usuario_id) VALUES (%s, %s, %s)", (day, hour, user_id))
+        cur.execute("INSERT INTO Reservas (dia, hora, datetime, usuario_id) VALUES (%s, %s, %s, %s)", (day_of_week, hour_of_day, datetime_str, user_id))
         if cur.rowcount > 0:
             conn.commit()
             return jsonify(success=True)
