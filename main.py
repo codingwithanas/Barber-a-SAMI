@@ -75,7 +75,7 @@ def get_reservas():
     finally:
         cursor.close()
         connection.close()
-
+        
 @app.route('/changePassword', methods=['POST'])
 def change_password():
     data = request.get_json()
