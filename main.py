@@ -4,11 +4,10 @@ from flask import Flask, request, jsonify, render_template, session, redirect, u
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
 import openai
-from config import API_KEY
+#from config import API_KEY
 import os
 import hashlib
-
-openai.api_key = API_KEY
+#openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -197,9 +196,22 @@ def reservarcita():
         return jsonify(success=False, message="Faltan datos necesarios (fecha y hora)")
 
     datetime_str = data['datetime']
+    print(datetime_str)
     datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
-    day_of_week = datetime_obj.strftime("%A") 
-    hour_of_day = datetime_obj.strftime("%H:%M")  
+
+    # Diccionario para mapear los días de la semana al español
+    days_in_spanish = {
+        'Monday': 'Lunes',
+        'Tuesday': 'Martes',
+        'Wednesday': 'Miércoles',
+        'Thursday': 'Jueves',
+        'Friday': 'Viernes',
+        'Saturday': 'Sábado',
+        'Sunday': 'Domingo'
+    }
+
+    day_of_week = days_in_spanish[datetime_obj.strftime("%A")]
+    hour_of_day = datetime_obj.strftime("%H:%M")
     conn = connect_db()
     cur = conn.cursor()
 
@@ -216,6 +228,25 @@ def reservarcita():
     finally:
         cur.close()
         conn.close()
+        
+@app.route('/getAllReservas', methods=['GET'])
+def get_all_reservas():
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT datetime FROM reservas")
+        reservas = cursor.fetchall()
+        reservas_dict = {reserva[0].strftime("%Y-%m-%d %H:%M"): True for reserva in reservas}
+        return jsonify(reservas_dict)
+    except Exception as e:
+        print(f"Error al obtener reservas: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
+
         
 if __name__ == '__main__':
     app.run(debug=True)
