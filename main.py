@@ -45,10 +45,41 @@ def reservar():
         username = session['users']
         return render_template('reservar.html', username=username)
     return render_template('reservar.html')
+
+@app.route('/servicios')
+def servicios():
+    print(session)
+    if 'users' in session:
+        username = session['users']
+        return render_template('servicios.html', username=username)
+    return render_template('servicios.html')
     
 @app.route('/galeria')
 def galeria():
         return render_template('galeria.html')
+
+@app.route('/contact')
+def contacto():
+    print(session)
+    if 'users' in session:
+        username = session['users']
+        return render_template('contacto.html', username=username)
+    return render_template('contacto.html')
+    
+@app.route('/resenas', methods=['GET'])
+def resenas():
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM valoraciones")
+    valoraciones = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    if 'users' in session:
+        username = session['users']
+        return render_template('resenas.html', username=username, valoraciones=valoraciones)
+    
+    return render_template('resenas.html', valoraciones=valoraciones)
     
 @app.route('/mipanel')
 def mipanel():
@@ -126,6 +157,11 @@ def login():
     cursor = connection.cursor()
     cursor.execute("SELECT id, name, password FROM users WHERE email=%s", (email,))
     user = cursor.fetchone()
+    if not user:
+        cursor.execute("SELECT id, name FROM Administrador WHERE email=%s AND password=%s", (email, password))
+        user = cursor.fetchone()
+        if user:
+            session['admin'] = True
     cursor.close()
     connection.close()
     if user and hashlib.md5(password.encode()).hexdigest() == user[2]:
@@ -226,6 +262,26 @@ def reservarcita():
         print(e)
         return jsonify(success=False, message="No se pudo realizar la reserva")
     finally:
+        cur.close()
+        conn.close()    
+        
+
+@app.route('/contacto', methods=['GET', 'POST'])
+def contacto_form():
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
+        telefono = request.form.get('telefono')
+        asunto = request.form.get('asunto')
+        mensaje = request.form.get('mensaje')
+
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO correocontacto (nombre, email, telefono, asunto, mensaje) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (nombre, email, telefono, asunto, mensaje))
+        conn.commit()
         cur.close()
         conn.close()
         
