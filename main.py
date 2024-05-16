@@ -148,6 +148,11 @@ def login():
     cursor = connection.cursor()
     cursor.execute("SELECT id, name FROM users WHERE email=%s AND password=%s", (email, password))
     user = cursor.fetchone()
+    if not user:
+        cursor.execute("SELECT id, name FROM Administrador WHERE email=%s AND password=%s", (email, password))
+        user = cursor.fetchone()
+        if user:
+            session['admin'] = True
     cursor.close()
     connection.close()
     if user:
@@ -281,6 +286,49 @@ def valoraciones_form():
         cur.close()
         conn.close()
         return render_template('valoraciones.html', valoraciones=valoraciones)
+    
+@app.route('/panel_administrador', methods=['GET'])
+def panel_administrador():
+    if 'user' in session and session['user'] == 'admin':
+        conn = connect_db()
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM mensajes")
+        mensajes = cur.fetchall()
+
+        cur.execute("SELECT * FROM valoraciones")
+        valoraciones = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        return render_template('panel_administrador.html', mensajes=mensajes, valoraciones=valoraciones)
+    else:
+        return "No tienes permiso para acceder a esta página."
+
+@app.route('/borrar_valoracion/<int:id>', methods=['POST'])
+def borrar_valoracion(id):
+    conn = connect_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM Administrador WHERE name = %s", (session['user'],))
+    admin = cur.fetchone()
+
+    if admin:
+        cur.execute("DELETE FROM valoraciones WHERE id = %s", (id,))
+        conn.commit()
+
+    cur.close()
+    conn.close()
+
+    if admin:
+        return redirect(url_for('panel_administrador'))
+    else:
+        return "No tienes permiso para realizar esta acción."
+    
+@app.route('/')
+def home():
+    return render_template('index.html', username=session.get('users'), admin=session.get('admin'))
 
 if __name__ == '__main__':
     app.run(debug=True)
