@@ -3,7 +3,7 @@ from datetime import date
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
-import openai
+#import openai
 #from config import API_KEY
 import os
 import hashlib
@@ -284,6 +284,78 @@ def contacto_form():
         conn.commit()
         cur.close()
         conn.close()
+
+        return jsonify(success=True, message="Mensaje enviado")
+    else:
+        return render_template('contacto.html')
+    
+@app.route('/valoraciones', methods=['GET', 'POST'])
+def valoraciones_form():
+    if request.method == 'POST':
+        nombre = request.form.get('name')
+        email = session.get('email')
+        valoracion = request.form.get('rating')
+        comentario = request.form.get('review')
+        print(valoracion)
+
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO valoraciones (nombre, email, valoracion, comentario) 
+            VALUES (%s, %s, %s, %s)
+        """, (nombre, email, valoracion, comentario))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify(success=True, message="Valoración enviada")
+    else:
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM valoraciones")
+        valoraciones = cur.fetchall()
+        cur.close()
+        conn.close()
+        return render_template('valoraciones.html', valoraciones=valoraciones)
+    
+@app.route('/panel_administrador', methods=['GET'])
+def panel_administrador():
+    if 'user' in session and session['user'] == 'admin':
+        conn = connect_db()
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM mensajes")
+        mensajes = cur.fetchall()
+
+        cur.execute("SELECT * FROM valoraciones")
+        valoraciones = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        return render_template('panel_administrador.html', mensajes=mensajes, valoraciones=valoraciones)
+    else:
+        return "No tienes permiso para acceder a esta página."
+
+@app.route('/borrar_valoracion/<int:id>', methods=['POST'])
+def borrar_valoracion(id):
+    conn = connect_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM Administrador WHERE name = %s", (session['user'],))
+    admin = cur.fetchone()
+
+    if admin:
+        cur.execute("DELETE FROM valoraciones WHERE id = %s", (id,))
+        conn.commit()
+
+    cur.close()
+    conn.close()
+
+    if admin:
+        return redirect(url_for('panel_administrador'))
+    else:
+        return "No tienes permiso para realizar esta acción."
         
 @app.route('/getAllReservas', methods=['GET'])
 def get_all_reservas():
@@ -302,7 +374,6 @@ def get_all_reservas():
             cursor.close()
         if 'connection' in locals():
             connection.close()
-
         
 if __name__ == '__main__':
     app.run(debug=True)
