@@ -1,13 +1,13 @@
+import datetime
 from datetime import date
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
 import openai
-from config import API_KEY
+#from config import API_KEY
 import os
 import hashlib
-
-openai.api_key = API_KEY
+#openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -192,17 +192,31 @@ def reservarcita():
     user_id = session['user_id']
     data = request.get_json()
     print(data)
-    if 'day' not in data or 'hour' not in data:
-        return jsonify(success=False, message="Faltan datos necesarios (día u hora)")
+    if 'datetime' not in data:
+        return jsonify(success=False, message="Faltan datos necesarios (fecha y hora)")
 
-    day = data['day']
-    hour = data['hour']
+    datetime_str = data['datetime']
+    print(datetime_str)
+    datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
 
+    # Diccionario para mapear los días de la semana al español
+    days_in_spanish = {
+        'Monday': 'Lunes',
+        'Tuesday': 'Martes',
+        'Wednesday': 'Miércoles',
+        'Thursday': 'Jueves',
+        'Friday': 'Viernes',
+        'Saturday': 'Sábado',
+        'Sunday': 'Domingo'
+    }
+
+    day_of_week = days_in_spanish[datetime_obj.strftime("%A")]
+    hour_of_day = datetime_obj.strftime("%H:%M")
     conn = connect_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("INSERT INTO Reservas (dia, hora, usuario_id) VALUES (%s, %s, %s)", (day, hour, user_id))
+        cur.execute("INSERT INTO Reservas (dia, hora, datetime, usuario_id) VALUES (%s, %s, %s, %s)", (day_of_week, hour_of_day, datetime_str, user_id))
         if cur.rowcount > 0:
             conn.commit()
             return jsonify(success=True)
@@ -214,6 +228,25 @@ def reservarcita():
     finally:
         cur.close()
         conn.close()
+        
+@app.route('/getAllReservas', methods=['GET'])
+def get_all_reservas():
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT datetime FROM reservas")
+        reservas = cursor.fetchall()
+        reservas_dict = {reserva[0].strftime("%Y-%m-%d %H:%M"): True for reserva in reservas}
+        return jsonify(reservas_dict)
+    except Exception as e:
+        print(f"Error al obtener reservas: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
+
         
 if __name__ == '__main__':
     app.run(debug=True)
