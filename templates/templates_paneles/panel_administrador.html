@@ -1,2 +1,159 @@
-<h1>Prueba</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/styles_panel_usuario.css">
+    <style>
+        body {
+            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    {% include './includes/navbar.html' %}
 
+    <main class="container mt-5">
+        <h1 class="mb-5 text-white">Panel Administrador</h1>
+
+        <!-- Gestión de Usuarios -->
+        <div class="mb-4">
+            <h3 class="text-white">Gestión de Usuarios</h3>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>{{ user[2] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_user', id=user[0]) }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Revisar Reservas -->
+        <div class="mb-4">
+            <h3 class="text-white">Revisar Reservas</h3>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario ID</th>
+                        <th>Fecha y Hora</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                    <tr>
+                        <td>{{ reserva[0] }}</td>
+                        <td>{{ reserva[1] }}</td>
+                        <td>{{ reserva[2] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_reserva', id=reserva[0]) }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Correos de Contacto -->
+        <div class="mb-4">
+            <h3 class="text-white">Correos de Contacto</h3>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Asunto</th>
+                        <th>Mensaje</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for correo in correos %}
+                    <tr>
+                        <td>{{ correo[0] }}</td>
+                        <td>{{ correo[1] }}</td>
+                        <td>{{ correo[2] }}</td>
+                        <td>{{ correo[3] }}</td>
+                        <td>{{ correo[4] }}</td>
+                        <td>{{ correo[5] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_contacto', nombre=correo[0] or 'NULL', email=correo[1] or 'NULL', telefono=correo[2] or 'NULL') }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Valoraciones -->
+        <div class="mb-4">
+            <h3 class="text-white">Valoraciones</h3>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Valoración</th>
+                        <th>Comentario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for valoracion in valoraciones %}
+                    <tr>
+                        <td>{{ valoracion[0] }}</td>
+                        <td>{{ valoracion[1] }}</td>
+                        <td>{{ valoracion[2] }}</td>
+                        <td>{{ valoracion[3] }}</td>
+                        <td>{{ valoracion[4] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', email=valoracion[1] or 'NULL', valoracion=valoracion[2] or 'NULL') }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    {% include './includes/footer.html' %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/form_handling.js"></script>
+    <script src="/static/js/cambio_datos.js"></script>
+    <script src="/static/js/revisar_reservas.js"></script>
+</body>
+</html>

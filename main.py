@@ -37,14 +37,17 @@ def index():
 def estils():
     if 'users' in session:
         username = session['users']
-        return render_template('estils.html', username=username)
+        admin = session.get('admin', False)
+        return render_template('estils.html', username=username, admin=admin)
+    return render_template('estils.html')
 
 @app.route('/reservar')
 def reservar():
     print(session)
     if 'users' in session:
         username = session['users']
-        return render_template('reservar.html', username=username)
+        admin = session.get('admin', False)
+        return render_template('reservar.html', username=username, admin=admin)
     return render_template('reservar.html')
 
 @app.route('/servicios')
@@ -52,19 +55,25 @@ def servicios():
     print(session)
     if 'users' in session:
         username = session['users']
-        return render_template('servicios.html', username=username)
+        admin = session.get('admin', False)
+        return render_template('servicios.html', username=username, admin=admin)
     return render_template('servicios.html')
     
 @app.route('/galeria')
 def galeria():
-        return render_template('galeria.html')
+    if 'users' in session:
+        username = session['users']
+        admin = session.get('admin', False)
+        return render_template('galeria.html', username=username, admin=admin)
+    return render_template('galeria.html')
 
 @app.route('/contact')
 def contacto():
     print(session)
     if 'users' in session:
         username = session['users']
-        return render_template('contacto.html', username=username)
+        admin = session.get('admin', False)
+        return render_template('contacto.html', username=username, admin=admin)
     return render_template('contacto.html')
     
 @app.route('/resenas', methods=['GET'])
@@ -78,15 +87,16 @@ def resenas():
 
     if 'users' in session:
         username = session['users']
-        return render_template('resenas.html', username=username, valoraciones=valoraciones)
-    
-    return render_template('resenas.html', valoraciones=valoraciones)
+        admin = session.get('admin', False)
+        return render_template('resenas.html', username=username, admin=admin, valoraciones=valoraciones)
+    return render_template('resenas.html', valoraciones=valoraciones, admin=admin)
     
 @app.route('/mipanel')
 def mipanel():
     if 'users' in session:
         username = session['users']
-        return render_template('templates_paneles/panel_usuario.html', username=username)
+        admin = session.get('admin', False)
+        return render_template('templates_paneles/panel_usuario.html', username=username, admin=admin)
     return redirect(url_for('templates_paneles/panel_usuario.html'))
 @app.route('/getReservas', methods=['GET'])
 def get_reservas():
@@ -163,8 +173,8 @@ def login():
     if user and hashlib.md5(password.encode()).hexdigest() == user[2]:
         session['users'] = user[1]
         session['user_id'] = user[0]
-        session['admin'] = user[3]  # Almacena si el usuario es admin en la sesión
-        print("Sesión después del login:", session)  # Añade este mensaje de depuración
+        session['admin'] = user[3]  
+        print("Sesión después del login:", session) 
         return jsonify({'message': 'Login successful'})
     else:
         return jsonify({'error': 'Invalid email or password'})
@@ -234,7 +244,6 @@ def reservarcita():
     print(datetime_str)
     datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
 
-    # Diccionario para mapear los días de la semana al español
     days_in_spanish = {
         'Monday': 'Lunes',
         'Tuesday': 'Martes',
@@ -262,7 +271,7 @@ def reservarcita():
         return jsonify(success=False, message="No se pudo realizar la reserva")
     finally:
         cur.close()
-        conn.close()    
+        conn.close()   
         
 
 @app.route('/contacto', methods=['GET', 'POST'])
@@ -319,35 +328,72 @@ def valoraciones_form():
     
 @app.route('/panel_administrador', methods=['GET'])
 def panel_administrador():
-    print("Contenido de la sesión en /panel_administrador:", session)  
-    if 'admin' in session and session['admin']: 
+    print("Contenido de la sesión en /panel_administrador:", session)
+    if 'admin' in session and session['admin']:
+        username = session['users']
+        
+        connection = connect_db()
+        cursor = connection.cursor()
 
-        return render_template('templates_paneles/panel_administrador.html')
+        cursor.execute("SELECT id, name, email FROM users")
+        users = cursor.fetchall()
+
+        cursor.execute("SELECT id, usuario_id, datetime FROM reservas")
+        reservas = cursor.fetchall()
+
+        cursor.execute("SELECT nombre, email, telefono, asunto, mensaje FROM correocontacto")
+        correos = cursor.fetchall()
+
+        cursor.execute("SELECT nombre, email, valoracion, comentario FROM valoraciones")
+        valoraciones = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        return render_template('templates_paneles/panel_administrador.html', username=username, admin=True, users=users, reservas=reservas, correos=correos, valoraciones=valoraciones)
     else:
         return "No tienes permiso para acceder a esta página."
 
+@app.route('/delete_user/<int:id>', methods=['POST'])
+def delete_user(id):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM users WHERE id = %s", (id,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return redirect(url_for('panel_administrador'))
 
+@app.route('/delete_reserva/<int:id>', methods=['POST'])
+def delete_reserva(id):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM reservas WHERE id = %s", (id,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return redirect(url_for('panel_administrador'))
 
-@app.route('/borrar_valoracion/<int:id>', methods=['POST'])
-def borrar_valoracion(id):
-    conn = connect_db()
-    cur = conn.cursor()
+@app.route('/delete_valoracion/<nombre>/<email>/<valoracion>', methods=['POST'])
+def delete_valoracion(nombre, email, valoracion):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM valoraciones WHERE nombre = %s AND email = %s AND valoracion = %s", (nombre, email, valoracion))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return redirect(url_for('panel_administrador'))
 
-    cur.execute("SELECT * FROM Administrador WHERE name = %s", (session['user'],))
-    admin = cur.fetchone()
+@app.route('/delete_contacto/<nombre>/<email>/<telefono>', methods=['POST'])
+def delete_contacto(nombre, email, telefono):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM correocontacto WHERE nombre = %s AND email = %s AND telefono = %s", (nombre, email, telefono))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return redirect(url_for('panel_administrador'))
 
-    if admin:
-        cur.execute("DELETE FROM valoraciones WHERE id = %s", (id,))
-        conn.commit()
-
-    cur.close()
-    conn.close()
-
-    if admin:
-        return redirect(url_for('panel_administrador'))
-    else:
-        return "No tienes permiso para realizar esta acción."
-        
 @app.route('/getAllReservas', methods=['GET'])
 def get_all_reservas():
     try:
