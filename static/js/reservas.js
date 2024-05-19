@@ -10,7 +10,7 @@ function generateCalendar() {
                 throw new Error('Network response was not ok');
             }
             return response.json();
-        })
+        }) 
         .then(reservas => {
             var table = document.getElementById('reservasTable');
             var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
