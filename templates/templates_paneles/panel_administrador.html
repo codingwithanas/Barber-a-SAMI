@@ -1,21 +1,2 @@
-<h1>Panel de administrador</h1>
+<h1>Prueba</h1>
 
-<h2>Mensajes</h2>
-{% for mensaje in mensajes %}
-    <div class="mensaje">
-        <h3>{{ mensaje[0] }}</h3>
-        <p>{{ mensaje[1] }}</p>
-    </div>
-{% endfor %}
-
-<h2>Valoraciones</h2>
-{% for valoracion in valoraciones %}
-    <div class="valoracion">
-        <h3>{{ valoracion[0] }}</h3>
-        <p>{{ valoracion[2] }} estrellas</p>
-        <p>{{ valoracion[3] }}</p>
-        <form action="/borrar_valoracion/{{ valoracion[0] }}" method="post">
-            <input type="submit" value="Borrar">
-        </form>
-    </div>
-{% endfor %}
