@@ -10,13 +10,11 @@
 
             {% if username %}
             <li><a href="/estils">Estils IA</a></li>
-            <li style="float:right"><a href="/mipanel">Bienvenido {{ username }}</a></li>
             <li style="float:right"><a href="/logout">Cerrar sesión</a></li>
             {% if admin %}
             <li><a href="/panel_administrador">Panel de administrador</a></li>
-            {% else %}
-            <li><a href="/mipanel">Bienvenido {{ username }}</a></li>
             {% endif %}
+            <li style="float:right"><a href="/mipanel">Bienvenido {{ username }}</a></li>
             {% else %}
             <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
             {% endif %}

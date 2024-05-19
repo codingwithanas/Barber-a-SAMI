@@ -29,7 +29,8 @@ def index():
     print(session)
     if 'users' in session:
         username = session['users']
-        return render_template('index.html', username=username)
+        admin = session.get('admin', False)
+        return render_template('index.html', username=username, admin=admin)
     return render_template('index.html')
 
 @app.route('/estils')
@@ -155,22 +156,20 @@ def login():
     password = request.form['loginPassword']
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute("SELECT id, name, password FROM users WHERE email=%s", (email,))
+    cursor.execute("SELECT id, name, password, admin FROM users WHERE email=%s", (email,))
     user = cursor.fetchone()
-    if not user:
-        cursor.execute("SELECT id, name FROM Administrador WHERE email=%s AND password=%s", (email, password))
-        user = cursor.fetchone()
-        if user:
-            session['admin'] = True
     cursor.close()
     connection.close()
     if user and hashlib.md5(password.encode()).hexdigest() == user[2]:
         session['users'] = user[1]
         session['user_id'] = user[0]
-        print(session)
+        session['admin'] = user[3]  # Almacena si el usuario es admin en la sesión
+        print("Sesión después del login:", session)  # Añade este mensaje de depuración
         return jsonify({'message': 'Login successful'})
     else:
         return jsonify({'error': 'Invalid email or password'})
+
+
 
 
 @app.route('/register', methods=['POST'])
@@ -320,22 +319,14 @@ def valoraciones_form():
     
 @app.route('/panel_administrador', methods=['GET'])
 def panel_administrador():
-    if 'user' in session and session['user'] == 'admin':
-        conn = connect_db()
-        cur = conn.cursor()
+    print("Contenido de la sesión en /panel_administrador:", session)  
+    if 'admin' in session and session['admin']: 
 
-        cur.execute("SELECT * FROM mensajes")
-        mensajes = cur.fetchall()
-
-        cur.execute("SELECT * FROM valoraciones")
-        valoraciones = cur.fetchall()
-
-        cur.close()
-        conn.close()
-
-        return render_template('panel_administrador.html', mensajes=mensajes, valoraciones=valoraciones)
+        return render_template('templates_paneles/panel_administrador.html')
     else:
         return "No tienes permiso para acceder a esta página."
+
+
 
 @app.route('/borrar_valoracion/<int:id>', methods=['POST'])
 def borrar_valoracion(id):
