@@ -25,7 +25,7 @@
     {% include 'includes/login.html' %}
     {% include 'includes/register.html' %}
 
-    <div class="container">
+    <div class="container container-custom">
         <h1>Identifica tu Corte</h1>
         <div class="opciones">
             <h2>Tipo de Cabeza</h2>
@@ -51,7 +51,7 @@
             <div id="recomendacionCorte"></div>
         </div>
 
-        <button onclick="identificarCorte()" class="btn btn-primary btn-block mt-3">Identifica tu Corte</button>
+        <button onclick="identificarCorte()" class="btn btn-custom btn-block mt-3">Identifica tu Corte</button>
     </div>
 
     <div id="chatbotModal" class="modal">
@@ -87,10 +87,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        // Si hay un error, mostrar el mensaje de error en lugar de la respuesta
                         document.getElementById('recomendacionCorte').innerText = data.error;
                     } else {
-                        // Si no hay error, mostrar la respuesta del chatbot
                         document.getElementById('recomendacionCorte').innerText = data.respuesta;
                     }
                     document.getElementById('respuestaChatbot').style.display = 'block';
