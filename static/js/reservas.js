@@ -1,6 +1,6 @@
 window.onload = function () {
     generateCalendar();
-    setInterval(generateCalendar, 24 * 60 * 60 * 1000);
+    setInterval(generateCalendar, 24 * 60 * 60 * 1000); // Actualizar cada día
 };
 
 function generateCalendar() {
@@ -22,7 +22,7 @@ function generateCalendar() {
             headRow.insertCell(0);
 
             var today = new Date();
-            var startOfWeek = today.getDate() - today.getDay() + 1;
+            var startOfWeek = today.getDate() - today.getDay() + 1; // Empezar el lunes de esta semana
             today.setDate(startOfWeek);
 
             days.forEach((day, i) => {
@@ -54,7 +54,7 @@ function generateCalendar() {
                         if (reservas[datetime]) {
                             cell.innerHTML = 'Reservado';
                         } else {
-                            cell.innerHTML = `<button data-day="${day}" data-hour="${hour}" data-datetime="${datetime}" onclick="openForm(this)">Reservar</button>`;
+                            cell.innerHTML = `<button data-datetime="${datetime}" onclick="openForm(this)">Reservar</button>`;
                         }
                     }
                 });
@@ -67,13 +67,24 @@ function generateCalendar() {
 
 function openForm(button) {
     var datetime = button.getAttribute('data-datetime');
+    var confirmServiceButton = document.getElementById('confirmServiceButton');
+    
+    confirmServiceButton.onclick = function() {
+        var serviceSelect = document.getElementById('serviceSelect');
+        var servicio = serviceSelect.value;
+        makeReservation(datetime, servicio);
+    };
 
+    $('#serviceModal').modal('show');
+}
+
+function makeReservation(datetime, servicio) {
     fetch('/reservarcita', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ datetime: datetime }),
+        body: JSON.stringify({ datetime: datetime, servicio: servicio }),
     })
     .then(response => response.json())
     .then(data => {

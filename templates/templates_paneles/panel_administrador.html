@@ -61,6 +61,7 @@
                         <th>ID</th>
                         <th>Usuario ID</th>
                         <th>Fecha y Hora</th>
+                        <th>Servicio</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -70,6 +71,7 @@
                         <td>{{ reserva[0] }}</td>
                         <td>{{ reserva[1] }}</td>
                         <td>{{ reserva[2] }}</td>
+                        <td>{{ reserva[3] }}</td>
                         <td>
                             <form method="POST" action="{{ url_for('delete_reserva', id=reserva[0]) }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
