@@ -10,11 +10,17 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #aaa;
         }
 
         .container {
             width: 80%;
             margin: auto;
+        }
+
+        .container h1 {
+            margin-top: 20px;
+            color: white;
         }
 
         .navbar {
@@ -88,9 +94,9 @@
         }
 
         .star-rating {
-        direction: rtl;
-        display: inline-block;
-        padding: 20px;
+            direction: rtl;
+            display: inline-block;
+            padding: 20px;
         }
 
         .star-rating input[type="radio"] {
@@ -104,7 +110,10 @@
         }
 
         .star-rating input[type="radio"]:checked ~ label {
-            color: gold;
+            color: yellow;
+        }
+        .star-rating input[type="radio"] + label {
+            display: inline-block;
         }
 
         #loginForm input,
@@ -114,7 +123,8 @@
 
         #new-review-form {
         width: 600px;
-        margin-top: 100PX;
+        margin-top: 20PX;
+        margin-bottom: 50px;
         padding: 20px;
         background-color: #f1f1f1;
         border-radius: 4px;

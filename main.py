@@ -314,7 +314,7 @@ def valoraciones_form():
         cur.close()
         conn.close()
 
-        return jsonify(success=True, message="Valoración enviada")
+        return redirect(url_for('mipanel'))
     else:
         conn = connect_db()
         cur = conn.cursor()
