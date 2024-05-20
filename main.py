@@ -88,8 +88,8 @@ def resenas():
     if 'users' in session:
         username = session['users']
         admin = session.get('admin', False)
-        return render_template('resenas.html', username=username, admin=admin, valoraciones=valoraciones)
-    return render_template('resenas.html', valoraciones=valoraciones, admin=admin)
+        return render_template('resenas.html', username=username, valoraciones=valoraciones)
+    return render_template('resenas.html', valoraciones=valoraciones,)
     
 @app.route('/mipanel')
 def mipanel():
@@ -174,9 +174,9 @@ def login():
         session['user_id'] = user[0]
         session['admin'] = user[3]  
         print("Sesión después del login:", session) 
-        return jsonify({'message': 'Login successful'})
+        return jsonify({'message': 'Inicio de sesión exitoso'})
     else:
-        return jsonify({'error': 'Invalid email or password'})
+        return jsonify({'error': 'Email o contraseña incorrectos'})
 
 
 
@@ -194,9 +194,9 @@ def register():
         connection.commit()
         cursor.close()
         connection.close()
-        return jsonify({'message': 'Registration successful'})
+        return jsonify({'message': 'Registro exitoso'})
     except IntegrityError:
-        return jsonify({'error': 'Email already exists'})
+        return jsonify({'error': 'Este email ya está registrado'}), 400
 
 
 @app.route('/logout')
