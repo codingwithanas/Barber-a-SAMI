@@ -13,12 +13,13 @@ $(document).ready(function() {
                 reservationsList.empty();
                 if (data.reservas && data.reservas.length > 0) {
                     $.each(data.reservas, function(index, reserva) {
-                        var day = reserva[1]; // Día de la reserva
-                        var hour = reserva[2]; // Hora de la reserva
-                        var date = moment(reserva[3]).format('dddd, D [de] MMMM [de] YYYY'); // Formatear solo la fecha con moment.js
+                        var day = reserva[1]; 
+                        var hour = reserva[2];
+                        var date = moment(reserva[3]).format('dddd, D [de] MMMM [de] YYYY'); 
+                        var servicio = reserva[4]; 
                         var reservationItem = $('<li>')
                             .addClass('list-group-item d-flex justify-content-between align-items-center')
-                            .text(day + ' a las ' + hour + ' (' + date + ')'); // Mostrar día, hora y fecha
+                            .text(day + ' a las ' + hour + ' (' + date + ') - ' + servicio);
                         var deleteButton = $('<button>')
                             .addClass('btn btn-danger btn-sm delete-reserva')
                             .text('X')

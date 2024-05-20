@@ -107,7 +107,7 @@ def get_reservas():
         user_id = session['user_id']
         connection = connect_db()
         cursor = connection.cursor()
-        cursor.execute("SELECT id, dia, hora, datetime FROM reservas WHERE usuario_id=%s", (user_id,))
+        cursor.execute("SELECT id, dia, hora, datetime, servicio FROM reservas WHERE usuario_id=%s", (user_id,))
         reservas = cursor.fetchall()
         cursor.close()
         connection.close()
@@ -235,10 +235,11 @@ def reservarcita():
 
     user_id = session['user_id']
     data = request.get_json()
-    if 'datetime' not in data:
-        return jsonify(success=False, message="Faltan datos necesarios (fecha y hora)")
+    if 'datetime' not in data or 'servicio' not in data:
+        return jsonify(success=False, message="Faltan datos necesarios (fecha, hora o servicio)")
 
     datetime_str = data['datetime']
+    servicio = data['servicio']
     datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
 
     days_in_spanish = {
@@ -258,7 +259,8 @@ def reservarcita():
     cur = conn.cursor()
 
     try:
-        cur.execute("INSERT INTO reservas (dia, hora, datetime, usuario_id) VALUES (%s, %s, %s, %s)", (day_of_week, hour_of_day, datetime_str, user_id))
+        cur.execute("INSERT INTO reservas (dia, hora, datetime, usuario_id, servicio) VALUES (%s, %s, %s, %s, %s)",
+                    (day_of_week, hour_of_day, datetime_str, user_id, servicio))
         if cur.rowcount > 0:
             conn.commit()
             return jsonify(success=True)
@@ -269,8 +271,6 @@ def reservarcita():
     finally:
         cur.close()
         conn.close()
-
-        
 
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto_form():
@@ -336,7 +336,7 @@ def panel_administrador():
         cursor.execute("SELECT id, name, email FROM users")
         users = cursor.fetchall()
 
-        cursor.execute("SELECT id, usuario_id, datetime FROM reservas")
+        cursor.execute("SELECT id, usuario_id, datetime, servicio FROM reservas")
         reservas = cursor.fetchall()
 
         cursor.execute("SELECT nombre, email, telefono, asunto, mensaje FROM correocontacto")

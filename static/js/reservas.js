@@ -1,6 +1,6 @@
 window.onload = function () {
     generateCalendar();
-    setInterval(generateCalendar, 24 * 60 * 60 * 1000); 
+    setInterval(generateCalendar, 24 * 60 * 60 * 1000); // Actualizar cada día
 };
 
 function generateCalendar() {
@@ -22,14 +22,12 @@ function generateCalendar() {
             headRow.insertCell(0);
 
             var today = new Date();
-            var offset = 0;
+            var startOfWeek = today.getDate() - today.getDay() + 1; // Empezar el lunes de esta semana
+            today.setDate(startOfWeek);
 
             days.forEach((day, i) => {
-                var date = new Date();
-                do {
-                    date.setDate(today.getDate() + offset);
-                    offset++;
-                } while (date.getDay() === 0); // 0 es Domingo
+                var date = new Date(today);
+                date.setDate(today.getDate() + i);
 
                 var displayDate = date.toLocaleDateString('es-ES', {
                     weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'
@@ -39,7 +37,6 @@ function generateCalendar() {
                 cell.innerHTML = displayDate.charAt(0).toUpperCase() + displayDate.slice(1) + ' (' + day + ')';
             });
 
-            offset = 0;
             hours.forEach((hour, i) => {
                 var row = table.insertRow(-1);
                 var timeCell = row.insertCell(0);
@@ -47,20 +44,17 @@ function generateCalendar() {
 
                 days.forEach((day, j) => {
                     var cell = row.insertCell(-1);
+                    var date = new Date(today);
+                    date.setDate(today.getDate() + j);
+                    var datetime = date.toISOString().split('T')[0] + ' ' + hour;
+
                     if (j === 5 && i > 10) {
                         cell.innerHTML = 'Cerrado';
                     } else {
-                        var date = new Date();
-                        do {
-                            date.setDate(today.getDate() + offset);
-                            offset++;
-                        } while (date.getDay() === 0); 
-                        
-                        var datetime = date.toISOString().split('T')[0] + ' ' + hour;
                         if (reservas[datetime]) {
                             cell.innerHTML = 'Reservado';
                         } else {
-                            cell.innerHTML = `<button data-day="${day}" data-hour="${hour}" data-datetime="${datetime}" onclick="openForm(this)">Reservar</button>`;
+                            cell.innerHTML = `<button data-datetime="${datetime}" onclick="openForm(this)">Reservar</button>`;
                         }
                     }
                 });
@@ -73,13 +67,24 @@ function generateCalendar() {
 
 function openForm(button) {
     var datetime = button.getAttribute('data-datetime');
+    var confirmServiceButton = document.getElementById('confirmServiceButton');
+    
+    confirmServiceButton.onclick = function() {
+        var serviceSelect = document.getElementById('serviceSelect');
+        var servicio = serviceSelect.value;
+        makeReservation(datetime, servicio);
+    };
 
+    $('#serviceModal').modal('show');
+}
+
+function makeReservation(datetime, servicio) {
     fetch('/reservarcita', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ datetime: datetime }),
+        body: JSON.stringify({ datetime: datetime, servicio: servicio }),
     })
     .then(response => response.json())
     .then(data => {
