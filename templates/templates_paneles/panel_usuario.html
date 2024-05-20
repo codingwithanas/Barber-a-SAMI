@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -10,10 +10,7 @@
     <link rel="stylesheet" href="/static/css/styles_panel_usuario.css">
     <style>
         body {
-            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
+            background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
             background-size: cover;
         }
     </style>
@@ -70,14 +67,9 @@
                     <div class="card-header">Tus Reservas</div>
                     <div class="card-body">
                         <ul id="reservationsList" class="list-group">
-                            {% for reserva in reservas %}
-                            <li class="list-group-item">{{ reserva[0] }} a las {{ reserva[1] }}</li>
-                            <button onclick="modificarReserva()" class="btn btn-primary mt-3">Modificar Reserva</button>
-                            {% endfor %}
+                            <!-- Aquí se insertarán las reservas desde revisar_reservas.js -->
                         </ul>
-                        {% if not reservas %}
-                        <p id="noReservationsMessage" style="display: none;">No tienes reservas actualmente.</p>
-                        {% endif %}
+                        <p id="noReservationsMessage">No tienes reservas actualmente o están cargando...</p>
                     </div>
                 </div>
             </div>
@@ -85,11 +77,12 @@
     </main>
 
     {% include './includes/footer.html' %}
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="/static/js/script.js"></script>
     <script src="/static/js/form_handling.js"></script>
     <script src="/static/js/cambio_datos.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/locale/es.js"></script>
     <script src="/static/js/revisar_reservas.js"></script>
 </body>
 
