@@ -98,6 +98,7 @@ def mipanel():
         admin = session.get('admin', False)
         return render_template('templates_paneles/panel_usuario.html', username=username, admin=admin)
     return redirect(url_for('templates_paneles/panel_usuario.html'))
+
 @app.route('/getReservas', methods=['GET'])
 def get_reservas():
     try:
@@ -106,17 +107,15 @@ def get_reservas():
         user_id = session['user_id']
         connection = connect_db()
         cursor = connection.cursor()
-        cursor.execute("SELECT dia, hora FROM reservas WHERE usuario_id=%s", (user_id,))
+        cursor.execute("SELECT id, dia, hora, datetime FROM reservas WHERE usuario_id=%s", (user_id,))
         reservas = cursor.fetchall()
-        if reservas:
-            return jsonify({'reservas': reservas})
-        else:
-            return jsonify({'message': 'No hay reservas'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    finally:
         cursor.close()
         connection.close()
+        return jsonify({'reservas': reservas})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
         
 @app.route('/changePassword', methods=['POST'])
 def change_password():
@@ -236,12 +235,10 @@ def reservarcita():
 
     user_id = session['user_id']
     data = request.get_json()
-    print(data)
     if 'datetime' not in data:
         return jsonify(success=False, message="Faltan datos necesarios (fecha y hora)")
 
     datetime_str = data['datetime']
-    print(datetime_str)
     datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
 
     days_in_spanish = {
@@ -256,22 +253,23 @@ def reservarcita():
 
     day_of_week = days_in_spanish[datetime_obj.strftime("%A")]
     hour_of_day = datetime_obj.strftime("%H:%M")
+
     conn = connect_db()
     cur = conn.cursor()
 
     try:
-        cur.execute("INSERT INTO Reservas (dia, hora, datetime, usuario_id) VALUES (%s, %s, %s, %s)", (day_of_week, hour_of_day, datetime_str, user_id))
+        cur.execute("INSERT INTO reservas (dia, hora, datetime, usuario_id) VALUES (%s, %s, %s, %s)", (day_of_week, hour_of_day, datetime_str, user_id))
         if cur.rowcount > 0:
             conn.commit()
             return jsonify(success=True)
         else:
-            return jsonify(success=False, message="No se encontró el usuario")
+            return jsonify(success=False, message="No se pudo realizar la reserva")
     except Exception as e:
-        print(e)
-        return jsonify(success=False, message="No se pudo realizar la reserva")
+        return jsonify(success=False, message=str(e))
     finally:
         cur.close()
-        conn.close()   
+        conn.close()
+
         
 
 @app.route('/contacto', methods=['GET', 'POST'])
@@ -393,6 +391,24 @@ def delete_contacto(nombre, email, telefono):
     cursor.close()
     connection.close()
     return redirect(url_for('panel_administrador'))
+
+@app.route('/cancelar_reserva/<int:id>', methods=['DELETE'])
+def cancelar_reserva(id):
+    try:
+        if 'user_id' not in session:
+            return jsonify({'message': 'Usuario no autenticado'}), 401
+        user_id = session['user_id']
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM reservas WHERE id=%s AND usuario_id=%s", (id, user_id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Reserva eliminada con éxito'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 @app.route('/getAllReservas', methods=['GET'])
 def get_all_reservas():
