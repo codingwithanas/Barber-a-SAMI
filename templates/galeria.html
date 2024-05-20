@@ -3,9 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Barbería SAMI</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .gallery-item {
+            margin: 10px;
+        }
+        .gallery-item img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        }
+        .gallery-item p {
+            text-align: center;
+            color: white;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'includes/backtotop.html' %}
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/buzzcut.jpg" alt="Peinado 1">
+            <p>Buzzcut</p>
+        </div>
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/fade.jpg" alt="Peinado 2">
+            <p>Fade</p>
+        </div>
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/frances.jpg" alt="Peinado 2">
+            <p>Francés</p>
+        </div>
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/mullet.jpg" alt="Peinado 2">
+            <p>Mullet</p>
+        </div>
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/pompadour.jpg" alt="Peinado 2">
+            <p>Pompadour</p>
+        </div>
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/undercut.jpg" alt="Peinado 2">
+            <p>Undercut</p>
+        </div>
+        <div class="gallery-item">
+            <img src="/static/assets/galeria/undercut bun.jpg" alt="Peinado 2">
+            <p>Undercut Bun</p>
+        </div>
+    </div>
+    {% include 'includes/footer.html' %}
+
+
+    <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
 </body>
 </html>
