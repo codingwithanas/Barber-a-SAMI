@@ -1,6 +1,6 @@
 window.onload = function () {
     generateCalendar();
-    setInterval(generateCalendar, 24 * 60 * 60 * 1000); // Actualizar cada día
+    setInterval(generateCalendar, 24 * 60 * 60 * 1000);
 };
 
 function generateCalendar() {
