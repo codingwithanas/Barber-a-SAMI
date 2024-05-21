@@ -1,6 +1,7 @@
 <nav class="navbar">
     <div class="container">
-        <ul>
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <ul class="navbar-menu" id="navbarMenu">
             <li><a href="/">Inicio</a></li>
             <li><a href="/servicios">Servicios</a></li>
             <li><a href="/galeria">Galería</a></li>
@@ -21,3 +22,26 @@
         </ul>
     </div>
 </nav>
+
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" id="closeBtn">×</button>
+    <ul>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/servicios">Servicios</a></li>
+        <li><a href="/galeria">Galería</a></li>
+        <li><a href="/contact">Contacto</a></li>
+        <li><a href="/resenas">Reseñas</a></li>
+        <li><a href="/reservar">Reservas</a></li>
+
+        {% if username %}
+        <li><a href="/estils">Estils IA</a></li>
+        {% if admin %}
+        <li><a href="/panel_administrador">Panel de administrador</a></li>
+        {% endif %}
+        <li><a href="/mipanel">Bienvenido {{ username }}</a></li>
+        <li><a href="/logout">Cerrar sesión</a></li>
+        {% else %}
+        <li><a href="#" id="loginBtnSidebar">Inicia sesión</a></li>
+        {% endif %}
+    </ul>
+</div>
