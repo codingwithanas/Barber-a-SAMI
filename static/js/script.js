@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Navbar y sidebar
     var prevScrollpos = window.pageYOffset;
     window.addEventListener('scroll', function () {
         var currentScrollPos = window.pageYOffset;

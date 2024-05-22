@@ -1,9 +1,30 @@
 window.onload = function () {
-    generateCalendar();
-    setInterval(generateCalendar, 24 * 60 * 60 * 1000);
+    generateCalendar(0);
+    setInterval(() => generateCalendar(0), 24 * 60 * 60 * 1000); // Actualizar cada día
+
+    document.getElementById('nextWeekButton').addEventListener('click', function() {
+        weekOffset++;
+        generateCalendar(weekOffset);
+    });
+
+    document.getElementById('prevWeekButton').addEventListener('click', function() {
+        if (weekOffset > 0) {
+            weekOffset--;
+            generateCalendar(weekOffset);
+        }
+    });
 };
 
-function generateCalendar() {
+let weekOffset = 0;
+
+function generateCalendar(offset) {
+    var loadingMessage = document.getElementById('loadingMessage');
+    var table = document.getElementById('reservasTable');
+    
+    // Mostrar mensaje de carga y ocultar la tabla
+    loadingMessage.style.display = 'block';
+    table.style.display = 'none';
+
     fetch('/getAllReservas')
         .then(response => {
             if (!response.ok) {
@@ -12,7 +33,6 @@ function generateCalendar() {
             return response.json();
         }) 
         .then(reservas => {
-            var table = document.getElementById('reservasTable');
             var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
             var hours = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
 
@@ -22,8 +42,11 @@ function generateCalendar() {
             headRow.insertCell(0);
 
             var today = new Date();
-            var startOfWeek = today.getDate() - today.getDay() + 1; // Empezar el lunes de esta semana
-            today.setDate(startOfWeek);
+            today.setDate(today.getDate() + (offset * 7)); 
+
+            while (today.getDay() !== 1) {
+                today.setDate(today.getDate() - 1);
+            }
 
             days.forEach((day, i) => {
                 var date = new Date(today);
@@ -59,9 +82,13 @@ function generateCalendar() {
                     }
                 });
             });
+
+            loadingMessage.style.display = 'none';
+            table.style.display = 'table';
         })
         .catch(error => {
             console.error('Error:', error);
+            loadingMessage.style.display = 'none';
         });
 }
 
@@ -90,7 +117,7 @@ function makeReservation(datetime, servicio) {
     .then(data => {
         if (data.success) {
             alert('Reserva realizada con éxito');
-            location.reload();
+            generateCalendar(weekOffset);
         } else {
             alert(data.message || 'No se pudo realizar la reserva');
         }
@@ -98,4 +125,6 @@ function makeReservation(datetime, servicio) {
     .catch((error) => {
         console.error('Error:', error);
     });
+
+    $('#serviceModal').modal('hide');
 }

@@ -1,6 +1,13 @@
 <div class="container mt-5 bg-light p-4 rounded">
     <h1>Reservas</h1>
     <p class="mt-4">Por favor, seleccione una hora para reservar su cita:</p>
+    <div id="loadingMessage" class="text-center" style="display:none;">
+        <img src="/static/assets/loading.gif" alt="Cargando..." class="loading-gif" />
+    </div>
     <table id="reservasTable" class="table table-bordered">
     </table>
+    <div class="d-flex justify-content-between mt-3">
+        <button id="prevWeekButton" class="btn btn-primary">Semana Anterior</button>
+        <button id="nextWeekButton" class="btn btn-primary">Siguiente Semana</button>
+    </div>
 </div>
