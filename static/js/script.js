@@ -1,17 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Variables para el modal de inicio de sesión
     var loginBtn = document.getElementById("loginBtn");
     var loginBtnSidebar = document.getElementById("loginBtnSidebar");
     var loginModal = document.getElementById("loginModal");
     var closeLogin = document.querySelector("#loginModal .close");
 
-    // Variables para el modal de registro
     var registerLink = document.getElementById("registerLink");
     var registerModal = document.getElementById("registerModal");
     var closeRegister = document.querySelector("#registerModal .close");
     var backToLogin = document.getElementById("backToLogin");
 
-    // Mostrar modal de inicio de sesión
     if (loginBtn) {
         loginBtn.addEventListener("click", function () {
             loginModal.style.display = "block";
@@ -30,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Cambiar a modal de registro
     if (registerLink) {
         registerLink.addEventListener("click", function () {
             loginModal.style.display = "none";
@@ -94,4 +90,12 @@ document.addEventListener("DOMContentLoaded", function () {
             sidebar.style.display = "none";
         }
     });
+});
+
+document.getElementById('menuToggle').addEventListener('click', function() {
+    document.getElementById('sidebar').style.display = 'block';
+});
+
+document.getElementById('closeBtn').addEventListener('click', function() {
+    document.getElementById('sidebar').style.display = 'none';
 });

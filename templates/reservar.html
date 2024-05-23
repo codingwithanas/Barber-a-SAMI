@@ -22,7 +22,7 @@
     {% include 'sistema_reservas/reservas.html' %}
     {% include 'includes/footer.html' %}
 
-    <div id="serviceModal" class="modal" tabindex="-1" role="dialog">
+    <div id="serviceModal" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -36,10 +36,12 @@
               <div class="form-group">
                 <label for="serviceSelect">Tipo de Servicio</label>
                 <select class="form-control" id="serviceSelect">
-                  <option value="Corte">Corte</option>
+                  <option value="Corte degradado">Corte degradado</option>
+                  <option value="Corte normal">Corte normal</option>
+                  <option value="Arreglo barba">Arreglo barba</option>
+                  <option value="Afeitar">Afeitar</option>
                   <option value="Corte + Barba">Corte + Barba</option>
-                  <option value="Barba">Barba</option>
-                  <option value="Peinado">Peinado</option>
+                  <option value="Corte, Barba, Lavar y peinar">Corte, barba, lavar y peinar</option>
                 </select>
               </div>
             </form>
