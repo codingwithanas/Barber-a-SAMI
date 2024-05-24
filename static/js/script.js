@@ -69,6 +69,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    backToTop.addEventListener("click", function () {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    });
+    
     var menuToggle = document.getElementById("menuToggle");
     var sidebar = document.getElementById("sidebar");
     var closeBtn = document.getElementById("closeBtn");

@@ -114,8 +114,6 @@ def get_reservas():
         return jsonify({'reservas': reservas})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
         
 @app.route('/changePassword', methods=['POST'])
 def change_password():
@@ -177,9 +175,6 @@ def login():
         return jsonify({'message': 'Inicio de sesión exitoso'})
     else:
         return jsonify({'error': 'Email o contraseña incorrectos'})
-
-
-
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -302,7 +297,6 @@ def valoraciones_form():
         valoracion = request.form.get('rating')
         comentario = request.form.get('review')
 
-        # Convertir valoracion a entero para asegurar que se almacene correctamente
         try:
             valoracion = int(valoracion)
         except ValueError:
@@ -418,8 +412,6 @@ def cancelar_reserva(id):
         return jsonify({'message': 'Reserva eliminada con éxito'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
 
 @app.route('/getAllReservas', methods=['GET'])
 def get_all_reservas():

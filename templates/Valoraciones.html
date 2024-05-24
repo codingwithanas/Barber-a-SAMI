@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería SAMI - Valoraciones</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../static/css/styles.css">
     <style>
         body {
@@ -14,9 +15,11 @@
             background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
             background-size: cover;
         }
+
         .star-rating {
             direction: rtl;
-            display: inline-block;
+            display: flex;
+            justify-content: center;
             padding: 20px;
         }
 
@@ -30,12 +33,12 @@
             cursor: pointer;
         }
 
-        .star-rating input[type="radio"]:checked ~ label {
+        .star-rating input[type="radio"]:checked~label {
             color: yellow;
         }
 
-        .star-rating input[type="radio"] + label:hover,
-        .star-rating input[type="radio"] + label:hover ~ label {
+        .star-rating input[type="radio"]:hover~label,
+        .star-rating input[type="radio"]:hover~label~label {
             color: yellow;
         }
 
@@ -46,6 +49,7 @@
             background-color: rgb(86, 79, 79);
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(131, 127, 127, 0.1);
+            color: white;
         }
 
         #new-review-form h2 {
@@ -87,7 +91,7 @@
     {% include 'includes/register.html' %}
     {% include 'includes/backtotop.html' %}
     <div class="container">
-        <h1>Valoraciones</h1>
+        <h1>¿Has visitado recientemente la barbería?</h1>
         <div id="new-review-form">
             <h2>Deja tu valoración</h2>
             <form action="/valoraciones" method="POST">
