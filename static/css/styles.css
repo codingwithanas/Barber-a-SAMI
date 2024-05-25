@@ -2,38 +2,107 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #656565;
+    background-color: #333;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    color: #000000;
+    overflow-x: hidden;
 }
 
 .container {
     width: 90%;
     margin: 0 auto;
     max-width: 1200px;
+    background-color: #282828;
+    color: #fefefe;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto; 
+    margin-bottom: 50px;
+}
+
+.container-contact {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 1200px;
+    background-color: #282828;
+    color: #fefefe;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 50px;
+    overflow-x: auto; 
+    margin-bottom: 50px;
+}
+
+.footer .social-icons {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.footer .social-icons a {
+    color: white;
+    margin: 0 10px;
+    font-size: 20px;
+}
+
+.footer .social-icons a:hover {
+    color: #0275d8;
+}
+
+.container-footer {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 800px;
+    background-color: #282828;
+    color: #fefefe;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-x: auto; 
+    margin-bottom: 30px;
 }
 
 
+.social-icons {
+    background-color: #282828;
+    color: #fefefe;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto; 
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+
+.container-fluid {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
 .navbar {
-    background-color: rgba(40, 40, 40, 0.8);
+    background-color: transparent;
     color: #fff;
     padding: 20px 0;
     top: 0;
     width: 100%;
     z-index: 1000;
     transition: top 0.5s, background-color 0.5s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar.visible {
-    top: 0;
+    overflow: visible; /* Asegura que los elementos hijos sean visibles */
 }
 
 .navbar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: visible; /* Asegura que los elementos hijos sean visibles */
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
 }
 
 .navbar ul {
@@ -41,10 +110,12 @@ body {
     padding: 0;
     margin: 0;
     display: flex;
+    align-items: center;
 }
 
 .navbar ul li {
     margin-right: 20px;
+    position: relative; /* Para el dropdown */
 }
 
 .navbar ul li a {
@@ -57,6 +128,142 @@ body {
 
 .navbar ul li a:hover {
     background-color: #ffd700;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #282828;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2000; /* Asegura que se superponga al contenido */
+    overflow: visible; /* Asegura que todo el contenido sea visible */
+}
+
+.dropdown-menu .dropdown-item {
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #333;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-divider {
+    height: 1px;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    background-color: #444;
+}
+
+.logo {
+    height: 70px;
+}
+
+.sidebar {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: rgba(40, 40, 40, 0.95);
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+}
+
+.sidebar ul {
+    list-style: none; /* Elimina los puntos de la lista */
+    padding: 0; /* Elimina el padding predeterminado */
+    margin: 4px; /* Elimina el margen predeterminado */
+}
+
+.sidebar-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 22px;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #ffd700;
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 36px;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+.valoracion-card {
+    margin: 10px 0;
+}
+
+.card {
+    background-color: rgba(40, 40, 40, 0.85);
+    color: #fff;
+    border: none;
+    padding: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.card-title {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.card-text {
+    margin-bottom: 0.5em;
+}
+
+.stars {
+    font-size: 1.2em;
+    color: #ffd700;
+    margin-bottom: 1em;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .navbar ul {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar ul.visible {
+        display: flex;
+    }
 }
 
 .modal {
@@ -150,7 +357,7 @@ button[type="submit"]:hover {
     padding: 0;
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .footer ul li {
@@ -213,10 +420,9 @@ button[type="submit"]:hover {
     }
 }
 
-.slide {
-    animation: zoomEffect 15s ease-in-out infinite alternate;
+.slide-content {
+    text-align: center;
 }
-
 .slide-content h2 {
     font-size: 3em;
     margin-bottom: 0.5em;
@@ -252,47 +458,91 @@ button[type="submit"]:hover {
     display: none !important;
 }
 
-#reservasForm {
-    background-color: #f8f8f8;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-#reservasForm label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-#reservasForm input {
+.table {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-#reservasForm button {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#reservasTable {
-    width: 100%;
+    margin-top: 20px;
     border-collapse: collapse;
 }
 
-#reservasTable td,
-#reservasTable th {
-    border: 1px solid #ddd;
-    padding: 8px;
+.table th,
+.table td {
+    padding: 12px;
+    text-align: center;
 }
 
-#reservasTable th {
-    background-color: #333;
+.table th {
+    background-color: #444;
     color: #fff;
+    border: 1px solid #555;
+}
+
+.table td {
+    background-color: #333;
+    color: #ddd;
+    border: 1px solid #444;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #555;
+}
+
+button {
+    background-color: #555;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #777;
+}
+
+.loading-gif {
+    width: 50px;
+    height: 50px;
+}
+
+.day-box {
+    background-color: #32a89e;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.day-box h2 {
+    font-size: 1.5em;
+}
+
+.closed {
+    background-color: #a89e32;
+}
+
+.btn-primary {
+    background-color: #32a89e;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary:hover {
+    background-color: #287f78;
+}
+
+.btn-link {
+    color: inherit;
+    text-decoration: none; 
+    display: inline-block;
+    width: 100%; 
+    height: 100%;
+}
+
+.btn-link:focus,
+.btn-link:active {
+    outline: none; 
+    box-shadow: none;
 }

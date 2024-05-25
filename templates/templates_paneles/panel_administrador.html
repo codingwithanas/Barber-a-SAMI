@@ -124,7 +124,6 @@
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Email</th>
                         <th>Valoración</th>
                         <th>Comentario</th>
                         <th>Acciones</th>
@@ -137,9 +136,8 @@
                         <td>{{ valoracion[1] }}</td>
                         <td>{{ valoracion[2] }}</td>
                         <td>{{ valoracion[3] }}</td>
-                        <td>{{ valoracion[4] }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', email=valoracion[1] or 'NULL', valoracion=valoracion[2] or 'NULL') }}">
+                            <form method="POST" action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', valoracion=valoracion[1] or 'NULL') }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                             </form>
                         </td>
