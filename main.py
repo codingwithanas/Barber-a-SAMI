@@ -3,11 +3,11 @@ from datetime import date
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
-#import openai
-#from config import API_KEY
+import openai
+from config import API_KEY
 import os
 import hashlib
-#openai.api_key = API_KEY
+openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -39,7 +39,7 @@ def estils():
         username = session['users']
         admin = session.get('admin', False)
         return render_template('estils.html', username=username, admin=admin)
-    return render_template('estils.html')
+    return render_template('estils.html', username=username)
 
 @app.route('/reservar')
 def reservar():
@@ -114,21 +114,19 @@ def get_reservas():
         return jsonify({'reservas': reservas})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
         
 @app.route('/changePassword', methods=['POST'])
 def change_password():
     data = request.get_json()
     current_password = data['currentPassword']
     new_password = data['newPassword']
-    new_password = hashlib.md5(new_password.encode()).hexdigest()
+    new_password = hashlib.sha256(new_password.encode()).hexdigest()
     user_id = session['user_id']
     connection = connect_db()
     cursor = connection.cursor()
     cursor.execute("SELECT password FROM users WHERE id=%s", (user_id,))
     user = cursor.fetchone()
-    hashed_current_password = hashlib.md5(current_password.encode()).hexdigest()
+    hashed_current_password = hashlib.sha256(current_password.encode()).hexdigest()
     if user and user[0] == hashed_current_password:
             cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
             connection.commit()
@@ -169,7 +167,7 @@ def login():
     user = cursor.fetchone()
     cursor.close()
     connection.close()
-    if user and hashlib.md5(password.encode()).hexdigest() == user[2]:
+    if user and hashlib.sha256(password.encode()).hexdigest() == user[2]:
         session['users'] = user[1]
         session['user_id'] = user[0]
         session['admin'] = user[3]  
@@ -178,15 +176,12 @@ def login():
     else:
         return jsonify({'error': 'Email o contraseña incorrectos'})
 
-
-
-
 @app.route('/register', methods=['POST'])
 def register():
     name = request.form['registerName']
     email = request.form['registerEmail']
     password = request.form['registerPassword']
-    hashed_password = hashlib.md5(password.encode()).hexdigest()
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -291,37 +286,47 @@ def contacto_form():
         cur.close()
         conn.close()
 
-        return jsonify(success=True, message="Mensaje enviado")
-    else:
         return render_template('contacto.html')
+    else:
+        return render_template('contacto.html',)
     
 @app.route('/valoraciones', methods=['GET', 'POST'])
 def valoraciones_form():
     if request.method == 'POST':
         nombre = request.form.get('name')
-        email = session.get('email')
         valoracion = request.form.get('rating')
         comentario = request.form.get('review')
-        print(valoracion)
+
+        try:
+            valoracion = int(valoracion)
+        except ValueError:
+            return "Valor de valoración inválido", 400
 
         conn = connect_db()
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO valoraciones (nombre, email, valoracion, comentario) 
-            VALUES (%s, %s, %s, %s)
-        """, (nombre, email, valoracion, comentario))
+            INSERT INTO valoraciones (nombre, valoracion, comentario) 
+            VALUES (%s, %s, %s)
+        """, (nombre, valoracion, comentario))
         conn.commit()
         cur.close()
         conn.close()
 
-        return redirect(url_for('mipanel'))
+        return redirect(url_for('valoraciones_form'))
+
     else:
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM valoraciones")
+        cur.execute("SELECT nombre, valoracion, comentario FROM valoraciones")
         valoraciones = cur.fetchall()
         cur.close()
         conn.close()
+
+        if 'users' in session:
+            username = session['users']
+            admin = session.get('admin', False)
+            return render_template('valoraciones.html', username=username, admin=admin, valoraciones=valoraciones)
+
         return render_template('valoraciones.html', valoraciones=valoraciones)
     
 @app.route('/panel_administrador', methods=['GET'])
@@ -342,7 +347,7 @@ def panel_administrador():
         cursor.execute("SELECT nombre, email, telefono, asunto, mensaje FROM correocontacto")
         correos = cursor.fetchall()
 
-        cursor.execute("SELECT nombre, email, valoracion, comentario FROM valoraciones")
+        cursor.execute("SELECT nombre, valoracion, comentario FROM valoraciones")
         valoraciones = cursor.fetchall()
 
         cursor.close()
@@ -372,11 +377,11 @@ def delete_reserva(id):
     connection.close()
     return redirect(url_for('panel_administrador'))
 
-@app.route('/delete_valoracion/<nombre>/<email>/<valoracion>', methods=['POST'])
-def delete_valoracion(nombre, email, valoracion):
+@app.route('/delete_valoracion/<nombre>/<valoracion>', methods=['POST'])
+def delete_valoracion(nombre, valoracion):
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute("DELETE FROM valoraciones WHERE nombre = %s AND email = %s AND valoracion = %s", (nombre, email, valoracion))
+    cursor.execute("DELETE FROM valoraciones WHERE nombre = %s  AND valoracion = %s", (nombre, valoracion))
     connection.commit()
     cursor.close()
     connection.close()
@@ -407,8 +412,6 @@ def cancelar_reserva(id):
         return jsonify({'message': 'Reserva eliminada con éxito'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
 
 @app.route('/getAllReservas', methods=['GET'])
 def get_all_reservas():

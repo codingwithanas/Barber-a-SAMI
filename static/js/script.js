@@ -1,54 +1,67 @@
+document.addEventListener("DOMContentLoaded", function () {
     var loginBtn = document.getElementById("loginBtn");
+    var loginBtnSidebar = document.getElementById("loginBtnSidebar");
     var loginModal = document.getElementById("loginModal");
-
     var closeLogin = document.querySelector("#loginModal .close");
 
     var registerLink = document.getElementById("registerLink");
     var registerModal = document.getElementById("registerModal");
-
     var closeRegister = document.querySelector("#registerModal .close");
-
     var backToLogin = document.getElementById("backToLogin");
 
-    loginBtn.addEventListener("click", function() {
-        loginModal.style.display = "block";
-    });
+    if (loginBtn) {
+        loginBtn.addEventListener("click", function () {
+            loginModal.style.display = "block";
+        });
+    }
 
-    closeLogin.addEventListener("click", function() {
-        loginModal.style.display = "none";
-    });
+    if (loginBtnSidebar) {
+        loginBtnSidebar.addEventListener("click", function () {
+            loginModal.style.display = "block";
+        });
+    }
 
-    registerLink.addEventListener("click", function() {
-        loginModal.style.display = "none"; 
-        registerModal.style.display = "block"; 
-    });
+    if (closeLogin) {
+        closeLogin.addEventListener("click", function () {
+            loginModal.style.display = "none";
+        });
+    }
 
-    closeRegister.addEventListener("click", function() {
-        registerModal.style.display = "none";
-    });
+    if (registerLink) {
+        registerLink.addEventListener("click", function () {
+            loginModal.style.display = "none";
+            registerModal.style.display = "block";
+        });
+    }
 
-    backToLogin.addEventListener("click", function(event) {
-        event.preventDefault(); 
-        loginModal.style.display = "block"; 
-        registerModal.style.display = "none"; 
-    });
+    if (closeRegister) {
+        closeRegister.addEventListener("click", function () {
+            registerModal.style.display = "none";
+        });
+    }
+
+    if (backToLogin) {
+        backToLogin.addEventListener("click", function (event) {
+            event.preventDefault();
+            loginModal.style.display = "block";
+            registerModal.style.display = "none";
+        });
+    }
 
     var prevScrollpos = window.pageYOffset;
-
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         var currentScrollPos = window.pageYOffset;
         var navbar = document.querySelector('.navbar');
         if (prevScrollpos > currentScrollPos) {
             navbar.style.top = "0";
         } else {
-            navbar.style.top = "-60px"; 
+            navbar.style.top = "-60px";
         }
         prevScrollpos = currentScrollPos;
     });
 
     var backToTop = document.getElementById("backToTop");
-
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
             backToTop.style.display = "block";
         } else {
@@ -56,31 +69,38 @@
         }
     });
 
-    backToTop.addEventListener("click", function() {
-        window.scrollTo({top: 0, behavior: 'smooth'});
+    backToTop.addEventListener("click", function () {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
     });
+    
+    var menuToggle = document.getElementById("menuToggle");
+    var sidebar = document.getElementById("sidebar");
+    var closeBtn = document.getElementById("closeBtn");
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const loginModal = document.getElementById('loginModal');
-        const registerModal = document.getElementById('registerModal');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const registerLink = document.getElementById('registerLink');
-        const backToLogin = document.getElementById('backToLogin');
-    
-        loginBtn.addEventListener('click', function () {
-            loginModal.style.display = 'block';
+    if (menuToggle) {
+        menuToggle.addEventListener("click", function () {
+            sidebar.style.display = "block";
         });
-    
-        registerLink.addEventListener('click', function () {
-            loginModal.style.display = 'none';
-            registerModal.style.display = 'block';
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", function () {
+            sidebar.style.display = "none";
         });
-    
-        backToLogin.addEventListener('click', function () {
-            registerModal.style.display = 'none';
-            loginModal.style.display = 'block';
-        });
+    }
+
+    window.addEventListener("click", function (event) {
+        if (event.target === sidebar) {
+            sidebar.style.display = "none";
+        }
     });
-    
+});
+
+document.getElementById('menuToggle').addEventListener('click', function() {
+    document.getElementById('sidebar').style.display = 'block';
+});
+
+document.getElementById('closeBtn').addEventListener('click', function() {
+    document.getElementById('sidebar').style.display = 'none';
+});
