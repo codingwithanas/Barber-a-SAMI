@@ -10,9 +10,6 @@
     <style>
         body {
             background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
             background-size: cover;
         }
     </style>
@@ -201,10 +198,10 @@
         <!-- Subir Imágenes a la Galería -->
         <div class="mb-4">
             <h3 class="text-white">Subir Nueva Imagen</h3>
-            <form method="POST" action="{{ url_for('panel_administrador') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('panel_administrador') }}" enctype="multipart/form-data" id="uploadForm">
                 <div class="form-group">
                     <label for="image" class="text-white">Seleccionar Imagen:</label>
-                    <input type="file" class="form-control" id="image" name="image" required>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                 </div>
                 <div class="form-group">
                     <label for="description" class="text-white">Descripción:</label>
@@ -243,5 +240,18 @@
     <script src="/static/js/form_handling.js"></script>
     <script src="/static/js/cambio_datos.js"></script>
     <script src="/static/js/revisar_reservas.js"></script>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            var fileInput = document.getElementById('image');
+            var filePath = fileInput.value;
+            var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+            if (!allowedExtensions.exec(filePath)) {
+                alert('Solo se permiten archivos con extensiones .jpeg/.jpg/.png/.gif');
+                fileInput.value = '';
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

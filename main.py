@@ -22,6 +22,11 @@ db_name = 'dbanasimario'
 db_port = '5432'
 db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io:5432/dbanasimario?sslmode=require"
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 chatbot_requests = {}
 
@@ -209,7 +214,7 @@ def panel_administrador():
                 flash('No se seleccionó ninguna imagen', 'danger')
                 return redirect(url_for('panel_administrador'))
 
-            if file:
+            if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
@@ -217,8 +222,9 @@ def panel_administrador():
                 cur.execute("INSERT INTO galeria (imagen, descripcion) VALUES (%s, %s)", (filename, description))
                 conn.commit()
                 flash('Imagen subida exitosamente', 'success')
+            else:
+                flash('Solo se permiten archivos con extensiones .jpeg/.jpg/.png/.gif', 'danger')
 
-    # Cargar datos para mostrar en el panel
     cur.execute("SELECT id, word FROM prohibited_words")
     prohibited_words_list = cur.fetchall()
     cur.execute("SELECT id, name, email, admin FROM users")
@@ -247,7 +253,7 @@ def panel_administrador():
                                correos=correos,
                                valoraciones=valoraciones,
                                imagenes=imagenes)
-    return redirect(url_for('templates_paneles/panel_administrador.html'))
+    return redirect(url_for('index'))
 
 @app.route('/delete_image/<int:id>', methods=['POST'])
 def delete_image(id):
