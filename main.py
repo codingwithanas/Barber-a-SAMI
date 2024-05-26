@@ -142,8 +142,16 @@ def resenas():
         comentario = request.form.get('review')
         servicio = request.form.get('service')
 
-        if contains_prohibited_words(comentario):
-            flash('Tu comentario contiene palabras inapropiadas y no puede ser publicado.', 'danger')
+        if len(nombre) > 30:
+            flash('El nombre no puede exceder los 30 caracteres.', 'danger')
+            return redirect(url_for('resenas'))
+
+        if len(comentario) > 100:
+            flash('El comentario no puede exceder los 100 caracteres.', 'danger')
+            return redirect(url_for('resenas'))
+
+        if contains_prohibited_words(nombre) or contains_prohibited_words(comentario):
+            flash('Tu comentario o nombre contiene palabras inapropiadas y no puede ser publicado.', 'danger')
             return redirect(url_for('resenas'))
 
         try:
@@ -405,6 +413,7 @@ def register():
 @app.route('/logout')
 def logout():
     session.pop('users', None)
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route('/chatbot', methods=['POST'])
@@ -468,7 +477,7 @@ def reservarcita():
             conn.commit()
 
             username = session['users']
-            msg = Message('Nueva Reserva', sender=app.config['MAIL_USERNAME'], recipients=['byforiouz@gmail.com'])
+            msg = Message('Nueva Reserva', sender=app.config['MAIL_USERNAME'], recipients=['sadkisa6@gmail.com'])
             msg.body = f'{username} ha reservado el día {day_of_week}, {datetime_str} con servicio de {servicio}. Si está ocupado, ingrese a la web y cancele la reserva.'
             mail.send(msg)
 
@@ -490,6 +499,11 @@ def contacto_form():
         asunto = request.form.get('asunto')
         mensaje = request.form.get('mensaje')
 
+        # Validar que el teléfono tenga exactamente 9 dígitos
+        if not telefono.isdigit() or len(telefono) != 9:
+            flash('El número de teléfono debe tener exactamente 9 dígitos.', 'danger')
+            return render_template('contacto.html')
+
         conn = connect_db()
         cur = conn.cursor()
         cur.execute("""
@@ -500,9 +514,11 @@ def contacto_form():
         cur.close()
         conn.close()
 
+        flash('Tu mensaje ha sido enviado correctamente.', 'success')
         return render_template('contacto.html')
     else:
-        return render_template('contacto.html',)
+        return render_template('contacto.html')
+
 
 @app.route('/delete_user/<int:id>', methods=['POST'])
 def delete_user(id):

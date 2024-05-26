@@ -149,6 +149,12 @@
         #new-review-form input[type="submit"]:hover {
             background-color: #444;
         }
+
+        .char-count {
+            float: right;
+            font-size: 0.9em;
+            color: lightgray;
+        }
     </style>
 </head>
 
@@ -161,8 +167,8 @@
     <div id="new-review-form">
         <h2>Deja tu valoración</h2>
         <form action="/resenas" method="POST">
-            <label for="name">Nombre:</label>
-            <input type="text" name="name" id="name" required>
+            <label for="name">Nombre: <span class="char-count" id="name-count">0/30</span></label>
+            <input type="text" name="name" id="name" maxlength="30" required oninput="updateCharCount('name', 30)">
             <label for="service">Servicio:</label>
             <select name="service" id="service" required>
                 <option value="Corte degradado">Corte degradado</option>
@@ -185,8 +191,8 @@
                 <input type="radio" name="rating" id="rating-1" value="1" checked>
                 <label for="rating-1">★</label>
             </div>
-            <label for="review">Comentario:</label>
-            <textarea name="review" id="review" required></textarea>
+            <label for="review">Comentario: <span class="char-count" id="review-count">0/100</span></label>
+            <textarea name="review" id="review" maxlength="100" required oninput="updateCharCount('review', 100)"></textarea>
             <input type="submit" value="Enviar">
         </form>
     </div>
@@ -250,6 +256,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="../static/js/script.js" defer></script>
     <script src="../static/js/form_handling.js" defer></script>
+    <script>
+        function updateCharCount(fieldId, maxLength) {
+            const field = document.getElementById(fieldId);
+            const countSpan = document.getElementById(fieldId + '-count');
+            countSpan.textContent = `${field.value.length}/${maxLength}`;
+        }
+    </script>
 </body>
 
 </html>
