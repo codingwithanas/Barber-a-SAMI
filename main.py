@@ -173,6 +173,13 @@ def resenas():
         conn.commit()
         cur.close()
         conn.close()
+        
+        msg = Message('Nueva Reseña', sender=app.config['MAIL_USERNAME'], recipients=['marioguba14@gmail.com'])
+        msg.body = f'Un nuevo usuario ha realizado una reseña:\n\nNombre: {nombre}\nValoración: {valoracion}\nComentario: {comentario}\nServicio: {servicio}\nFecha: {timestamp}'
+        mail.send(msg)
+
+        flash('Tu reseña ha sido publicada y se ha enviado una notificación.', 'success')
+        return redirect(url_for('resenas'))
 
     filter_type = request.args.get('filter', 'recent')
 
