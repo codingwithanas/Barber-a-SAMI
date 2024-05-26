@@ -125,11 +125,13 @@
                     <p class="card-text font-weight-bold">{{ imagen[2] }}</p>
                     <p class="text-muted text-right">
                         {% set adjusted_timestamp = imagen[3] %}
-                        {% set diff = (datetime.datetime.now(datetime.timezone.utc) -
-                        adjusted_timestamp).total_seconds() %}
+                        {% set now = datetime.datetime.now(datetime.timezone.utc) %}
+                        {% set diff = (now - adjusted_timestamp).total_seconds() %}
                         {% if diff < 3600 %} Hace {{ (diff // 60)|int }} minutos {% elif diff < 86400 %} Hace {{ (diff
-                            // 3600)|int }} horas {% else %} {{ adjusted_timestamp.strftime('%Y-%m-%d %H:%M') }} {%
-                            endif %} </p>
+                            // 3600)|int }} horas {% elif diff < 172800 and now.date()==(adjusted_timestamp +
+                            datetime.timedelta(days=1)).date() %} Ayer {% else %} {{
+                            adjusted_timestamp.strftime('%Y-%m-%d %H:%M') }} {% endif %} </p>
+                            <p class="text-muted text-right">Autor: {{ imagen[4] }}</p>
                 </div>
             </div>
         </div>

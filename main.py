@@ -80,24 +80,24 @@ def servicios():
 def galeria():
     conn = connect_db()
     cur = conn.cursor()
-    
+
     cur.execute("SET TIME ZONE 'Europe/Madrid';")
-    
+
     filter_type = request.args.get('filter', 'recent')
-    
+
     if filter_type == 'recent':
-        cur.execute("SELECT id, imagen, descripcion, fecha FROM galeria ORDER BY fecha DESC")
+        cur.execute("SELECT id, imagen, descripcion, fecha, autor FROM galeria ORDER BY fecha DESC")
     elif filter_type == 'oldest':
-        cur.execute("SELECT id, imagen, descripcion, fecha FROM galeria ORDER BY fecha ASC")
+        cur.execute("SELECT id, imagen, descripcion, fecha, autor FROM galeria ORDER BY fecha ASC")
     else:
-        cur.execute("SELECT id, imagen, descripcion, fecha FROM galeria")
-        
+        cur.execute("SELECT id, imagen, descripcion, fecha, autor FROM galeria")
+
     imagenes = cur.fetchall()
     cur.close()
     conn.close()
 
     madrid_tz = datetime.timezone(datetime.timedelta(hours=2))  # Madrid timezone (UTC+2)
-    imagenes = [(id, imagen, descripcion, fecha.replace(tzinfo=madrid_tz)) for id, imagen, descripcion, fecha in imagenes]
+    imagenes = [(id, imagen, descripcion, fecha.replace(tzinfo=madrid_tz), autor) for id, imagen, descripcion, fecha, autor in imagenes]
 
     if 'users' in session:
         username = session['users']
@@ -148,6 +148,8 @@ def resenas():
 
         try:
             valoracion = int(valoracion)
+            if valoracion < 1:
+                valoracion = 1
         except ValueError:
             flash('Valor de valoración inválido', 'danger')
             return redirect(url_for('resenas'))
@@ -191,7 +193,6 @@ def resenas():
     
     return render_template('resenas.html', valoraciones=valoraciones, datetime=datetime, filter_type=filter_type)
 
-
 @app.route('/panel_administrador', methods=['GET', 'POST'])
 def panel_administrador():
     if 'admin' not in session or not session['admin']:
@@ -213,7 +214,8 @@ def panel_administrador():
         elif 'image' in request.files:
             file = request.files['image']
             description = request.form.get('description')
-            
+            autor = session['users'] 
+
             if file.filename == '':
                 flash('No se seleccionó ninguna imagen', 'danger')
                 return redirect(url_for('panel_administrador'))
@@ -222,8 +224,8 @@ def panel_administrador():
                 filename = secure_filename(file.filename)
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
-                
-                cur.execute("INSERT INTO galeria (imagen, descripcion) VALUES (%s, %s)", (filename, description))
+
+                cur.execute("INSERT INTO galeria (imagen, descripcion, autor) VALUES (%s, %s, %s)", (filename, description, autor))
                 conn.commit()
                 flash('Imagen subida exitosamente', 'success')
             else:
