@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/styles_panel_usuario.css">
     <style>
         body {
-            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
+            background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -18,10 +18,45 @@
     </style>
 </head>
 <body>
-    {% include './includes/navbar.html' %}
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/flash_messages.html' %}
 
     <main class="container mt-5">
         <h1 class="mb-5 text-white">Panel Administrador</h1>
+
+        <!-- Gestión de Palabras Prohibidas -->
+        <div class="mb-4">
+            <h3 class="text-white">Gestión de Palabras Prohibidas</h3>
+            <form method="POST" action="{{ url_for('panel_administrador') }}">
+                <div class="form-group">
+                    <label for="new_prohibited_word" class="text-white">Añadir nueva palabra prohibida:</label>
+                    <input type="text" class="form-control" id="new_prohibited_word" name="new_prohibited_word" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Añadir</button>
+            </form>
+            <table class="table table-dark table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Palabra</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for word in prohibited_words %}
+                    <tr>
+                        <td>{{ word[0] }}</td>
+                        <td>{{ word[1] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_prohibited_word', id=word[0]) }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <!-- Gestión de Usuarios -->
         <div class="mb-4">
@@ -33,6 +68,8 @@
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Acciones</th>
+                        <th>Asignar como trabajador</th>
+                        <th>Quitar trabajador</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,9 +79,25 @@
                         <td>{{ user[1] }}</td>
                         <td>{{ user[2] }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('delete_user', id=user[0]) }}">
+                            <form method="POST" action="{{ url_for('delete_user', id=user[0]) }}" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                             </form>
+                        </td>
+                        <td>
+                            {% if not user[3] %}
+                            <form method="POST" action="{{ url_for('assign_admin') }}" style="display:inline;">
+                                <input type="hidden" name="user_id" value="{{ user[0] }}">
+                                <button type="submit" class="btn btn-primary">Agregar</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user[3] %}
+                            <form method="POST" action="{{ url_for('remove_admin') }}" style="display:inline;">
+                                <input type="hidden" name="user_id" value="{{ user[0] }}">
+                                <button type="submit" class="btn btn-warning">Quitar</button>
+                            </form>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
@@ -105,7 +158,6 @@
                         <td>{{ correo[2] }}</td>
                         <td>{{ correo[3] }}</td>
                         <td>{{ correo[4] }}</td>
-                        <td>{{ correo[5] }}</td>
                         <td>
                             <form method="POST" action="{{ url_for('delete_contacto', nombre=correo[0] or 'NULL', email=correo[1] or 'NULL', telefono=correo[2] or 'NULL') }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -135,7 +187,6 @@
                         <td>{{ valoracion[0] }}</td>
                         <td>{{ valoracion[1] }}</td>
                         <td>{{ valoracion[2] }}</td>
-                        <td>{{ valoracion[3] }}</td>
                         <td>
                             <form method="POST" action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', valoracion=valoracion[1] or 'NULL') }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -146,11 +197,48 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Subir Imágenes a la Galería -->
+        <div class="mb-4">
+            <h3 class="text-white">Subir Nueva Imagen</h3>
+            <form method="POST" action="{{ url_for('panel_administrador') }}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="image" class="text-white">Seleccionar Imagen:</label>
+                    <input type="file" class="form-control" id="image" name="image" required>
+                </div>
+                <div class="form-group">
+                    <label for="description" class="text-white">Descripción:</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Subir Imagen</button>
+            </form>
+        </div>
+
+        <!-- Imágenes en la Galería -->
+        <div class="mb-4">
+            <h3 class="text-white">Imágenes en la Galería</h3>
+            <div class="row">
+                {% for imagen in imagenes %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='uploads/' ~ imagen[1]) }}" class="card-img-top" alt="Imagen de Galería">
+                        <div class="card-body">
+                            <p class="card-text">{{ imagen[2] }}</p>
+                            <form method="POST" action="{{ url_for('delete_image', id=imagen[0]) }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </main>
 
-    {% include './includes/footer.html' %}
+    {% include 'includes/footer.html' %}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/js/script.js"></script>
     <script src="/static/js/form_handling.js"></script>
     <script src="/static/js/cambio_datos.js"></script>

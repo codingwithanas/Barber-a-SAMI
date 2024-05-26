@@ -22,6 +22,18 @@ body {
     margin-bottom: 50px;
 }
 
+.container-flash {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 1200px;
+    background-color: transparent;
+    color: #fefefe;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto; 
+    margin-bottom: 50px;
+}
+
 .container-contact {
     width: 90%;
     margin: 0 auto;
@@ -84,19 +96,19 @@ body {
 .navbar {
     background-color: transparent;
     color: #fff;
-    padding: 20px 0;
+    padding: 50px 0;
     top: 0;
     width: 100%;
     z-index: 1000;
     transition: top 0.5s, background-color 0.5s;
-    overflow: visible; /* Asegura que los elementos hijos sean visibles */
+    overflow: visible;  
 }
 
 .navbar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    overflow: visible; /* Asegura que los elementos hijos sean visibles */
+    overflow: visible;
 }
 
 .navbar-brand {
@@ -115,7 +127,7 @@ body {
 
 .navbar ul li {
     margin-right: 20px;
-    position: relative; /* Para el dropdown */
+    position: relative; 
 }
 
 .navbar ul li a {
@@ -138,8 +150,8 @@ body {
     background-color: #282828;
     min-width: 160px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 2000; /* Asegura que se superponga al contenido */
-    overflow: visible; /* Asegura que todo el contenido sea visible */
+    z-index: 2000;
+    overflow: visible;
 }
 
 .dropdown-menu .dropdown-item {
@@ -183,9 +195,9 @@ body {
 }
 
 .sidebar ul {
-    list-style: none; /* Elimina los puntos de la lista */
-    padding: 0; /* Elimina el padding predeterminado */
-    margin: 4px; /* Elimina el margen predeterminado */
+    list-style: none;
+    padding: 0;
+    margin: 4px;
 }
 
 .sidebar-logo {
@@ -402,23 +414,9 @@ button[type="submit"]:hover {
     justify-content: center;
     background-size: cover;
     background-position: center;
-    transition: transform 0.5s ease-in-out;
     overflow: hidden;
 }
 
-.slide:hover {
-    transform: scale(1.05);
-}
-
-@keyframes zoomEffect {
-    from {
-        transform: scale(1);
-    }
-
-    to {
-        transform: scale(1.05);
-    }
-}
 
 .slide-content {
     text-align: center;
@@ -545,4 +543,20 @@ button:hover {
 .btn-link:active {
     outline: none; 
     box-shadow: none;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-container input {
+    width: 100%;
+    padding-right: 30px;
+}
+
+.icon {
+    position: absolute;
+    right: 10px;
 }

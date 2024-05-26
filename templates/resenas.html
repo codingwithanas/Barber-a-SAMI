@@ -8,6 +8,148 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        body {
+            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .filter-dropdown {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .dropdown-menu .dropdown-item {
+            color: #fff;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #333;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            background-color: #444;
+        }
+
+        .dropdown-menu {
+            background-color: #444;
+            border: none;
+            min-width: 100%;
+            width: max-content;
+        }
+
+        .dropdown {
+            display: inline-block;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-toggle::after {
+            margin-left: 0.5em;
+        }
+
+        .dropdown-item {
+            white-space: nowrap;
+        }
+
+        .btn-review {
+            background-color: #444;
+            color: white;
+            margin-bottom: 20px;
+            margin-right: 10px;
+        }
+
+        .btn-review:hover {
+            background-color: #444;
+            color: white;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .star-rating {
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 30px;
+            color: lightgray;
+            cursor: pointer;
+        }
+
+        .star-rating input[type="radio"]:checked~label,
+        .star-rating input[type="radio"]:hover~label,
+        .star-rating input[type="radio"]:hover~label~label {
+            color: yellow;
+        }
+
+        #new-review-form {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(40, 40, 40, 0.85);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        #new-review-form h2 {
+            margin-bottom: 20px;
+        }
+
+        #new-review-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #new-review-form input[type="text"],
+        #new-review-form select,
+        #new-review-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #new-review-form input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #new-review-form input[type="submit"]:hover {
+            background-color: #444;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,19 +157,78 @@
     {% include 'includes/login.html' %}
     {% include 'includes/register.html' %}
     {% include 'includes/backtotop.html' %}
+    {% include 'includes/flash_messages.html' %}
+    <div id="new-review-form">
+        <h2>Deja tu valoración</h2>
+        <form action="/resenas" method="POST">
+            <label for="name">Nombre:</label>
+            <input type="text" name="name" id="name" required>
+            <label for="service">Servicio:</label>
+            <select name="service" id="service" required>
+                <option value="Corte degradado">Corte degradado</option>
+                <option value="Corte normal">Corte normal</option>
+                <option value="Arreglo barba">Arreglo barba</option>
+                <option value="Afeitar">Afeitar</option>
+                <option value="Corte + Barba">Corte + Barba</option>
+                <option value="Corte, Barba, Lavar y peinar">Corte, barba, lavar y peinar</option>
+            </select>
+            <label for="rating">Calificación:</label>
+            <div class="star-rating">
+                <input type="radio" name="rating" id="rating-5" value="5">
+                <label for="rating-5">★</label>
+                <input type="radio" name="rating" id="rating-4" value="4">
+                <label for="rating-4">★</label>
+                <input type="radio" name="rating" id="rating-3" value="3">
+                <label for="rating-3">★</label>
+                <input type="radio" name="rating" id="rating-2" value="2">
+                <label for="rating-2">★</label>
+                <input type="radio" name="rating" id="rating-1" value="1">
+                <label for="rating-1">★</label>
+            </div>
+            <label for="review">Comentario:</label>
+            <textarea name="review" id="review" required></textarea>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
     <div class="container-fluid mt-5">
+        <div class="filter-dropdown">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Ordenar por
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
+                    <a class="dropdown-item" href="/resenas?filter=recent" {% if filter_type=='recent' %}class="active"
+                        {% endif %}>Más reciente</a>
+                    <a class="dropdown-item" href="/resenas?filter=oldest" {% if filter_type=='oldest' %}class="active"
+                        {% endif %}>Más antiguo</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/resenas?filter=high_rating" {% if filter_type=='high_rating'
+                        %}class="active" {% endif %}>Más valoración</a>
+                    <a class="dropdown-item" href="/resenas?filter=low_rating" {% if filter_type=='low_rating'
+                        %}class="active" {% endif %}>Menos valoración</a>
+                </div>
+            </div>
+        </div>
         <div class="row">
             {% for valoracion in valoraciones %}
             <div class="col-md-6 col-lg-4 valoracion-card">
-                <div class="card">
+                <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">{{ valoracion[0] }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ valoracion[3] }}</h6>
                         <div class="card-text stars">
                             {% for i in range(valoracion[1] | int) %}
-                            ★
+                            <i class="fas fa-star text-warning"></i>
                             {% endfor %}
                         </div>
                         <p class="card-text">{{ valoracion[2] }}</p>
+                        <p class="text-muted text-right">
+                            {% set adjusted_timestamp = valoracion[4] %}
+                            {% set diff = (datetime.datetime.now() - adjusted_timestamp).total_seconds() %}
+                            {% if diff < 3600 %} {{ (diff // 60)|int }} minutos {% elif diff < 86400 %} {{ (diff //
+                                3600)|int }} horas {% else %} {{ adjusted_timestamp.strftime('%Y-%m-%d %H:%M') }} {%
+                                endif %} </p>
                     </div>
                 </div>
             </div>

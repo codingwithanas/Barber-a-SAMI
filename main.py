@@ -1,16 +1,20 @@
 import datetime
 from datetime import date
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from flask import Flask, flash, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
-import openai
-from config import API_KEY
+from werkzeug.utils import secure_filename
+#import openai
+#from config import API_KEY
 import os
 import hashlib
-openai.api_key = API_KEY
+
+#openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+UPLOAD_FOLDER = 'static/uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db_user = 'fl0user'
 db_password = 'QX2Bg8JoaRvG'
 db_host = 'ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io'
@@ -23,6 +27,9 @@ chatbot_requests = {}
 
 def connect_db():
     return connect(db_url)
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 @app.route('/')
 def index():
@@ -59,13 +66,35 @@ def servicios():
         return render_template('servicios.html', username=username, admin=admin)
     return render_template('servicios.html')
     
+
 @app.route('/galeria')
 def galeria():
+    conn = connect_db()
+    cur = conn.cursor()
+    
+    cur.execute("SET TIME ZONE 'Europe/Madrid';")
+    
+    filter_type = request.args.get('filter', 'recent')
+    
+    if filter_type == 'recent':
+        cur.execute("SELECT id, imagen, descripcion, fecha FROM galeria ORDER BY fecha DESC")
+    elif filter_type == 'oldest':
+        cur.execute("SELECT id, imagen, descripcion, fecha FROM galeria ORDER BY fecha ASC")
+    else:
+        cur.execute("SELECT id, imagen, descripcion, fecha FROM galeria")
+        
+    imagenes = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    madrid_tz = datetime.timezone(datetime.timedelta(hours=2))  # Madrid timezone (UTC+2)
+    imagenes = [(id, imagen, descripcion, fecha.replace(tzinfo=madrid_tz)) for id, imagen, descripcion, fecha in imagenes]
+
     if 'users' in session:
         username = session['users']
         admin = session.get('admin', False)
-        return render_template('galeria.html', username=username, admin=admin)
-    return render_template('galeria.html')
+        return render_template('galeria.html', username=username, admin=admin, imagenes=imagenes, filter_type=filter_type, datetime=datetime)
+    return render_template('galeria.html', imagenes=imagenes, filter_type=filter_type, datetime=datetime)
 
 @app.route('/contact')
 def contacto():
@@ -76,11 +105,72 @@ def contacto():
         return render_template('contacto.html', username=username, admin=admin)
     return render_template('contacto.html')
     
-@app.route('/resenas', methods=['GET'])
-def resenas():
+def load_prohibited_words():
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM valoraciones")
+    cur.execute("SELECT word FROM prohibited_words")
+    words = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [word[0] for word in words]
+
+prohibited_words = load_prohibited_words()
+
+
+def contains_prohibited_words(comment):
+    prohibited_words = load_prohibited_words()
+    comment_lower = comment.lower()
+    for word in prohibited_words:
+        if word in comment_lower:
+            return True
+    return False
+
+@app.route('/resenas', methods=['GET', 'POST'])
+def resenas():
+    if request.method == 'POST':
+        nombre = request.form.get('name')
+        valoracion = request.form.get('rating')
+        comentario = request.form.get('review')
+        servicio = request.form.get('service')
+
+        if contains_prohibited_words(comentario):
+            flash('Tu comentario contiene palabras inapropiadas y no puede ser publicado.', 'danger')
+            return redirect(url_for('resenas'))
+
+        try:
+            valoracion = int(valoracion)
+        except ValueError:
+            flash('Valor de valoración inválido', 'danger')
+            return redirect(url_for('resenas'))
+
+        timestamp = datetime.datetime.now()
+
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO valoraciones (nombre, valoracion, comentario, servicio, timestamp) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (nombre, valoracion, comentario, servicio, timestamp))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    filter_type = request.args.get('filter', 'recent')
+
+    conn = connect_db()
+    cur = conn.cursor()
+    
+    if filter_type == 'high_rating':
+        cur.execute("SELECT nombre, valoracion, comentario, servicio, timestamp FROM valoraciones ORDER BY valoracion DESC")
+    elif filter_type == 'low_rating':
+        cur.execute("SELECT nombre, valoracion, comentario, servicio, timestamp FROM valoraciones ORDER BY valoracion ASC")
+    elif filter_type == 'recent':
+        cur.execute("SELECT nombre, valoracion, comentario, servicio, timestamp FROM valoraciones ORDER BY timestamp DESC")
+    elif filter_type == 'oldest':
+        cur.execute("SELECT nombre, valoracion, comentario, servicio, timestamp FROM valoraciones ORDER BY timestamp ASC")
+    else:
+        cur.execute("SELECT nombre, valoracion, comentario, servicio, timestamp FROM valoraciones")
+    
     valoraciones = cur.fetchall()
     cur.close()
     conn.close()
@@ -88,9 +178,109 @@ def resenas():
     if 'users' in session:
         username = session['users']
         admin = session.get('admin', False)
-        return render_template('resenas.html', username=username, valoraciones=valoraciones)
-    return render_template('resenas.html', valoraciones=valoraciones,)
+        return render_template('resenas.html', username=username, admin=admin, valoraciones=valoraciones, datetime=datetime, filter_type=filter_type)
     
+    return render_template('resenas.html', valoraciones=valoraciones, datetime=datetime, filter_type=filter_type)
+
+
+@app.route('/panel_administrador', methods=['GET', 'POST'])
+def panel_administrador():
+    if 'admin' not in session or not session['admin']:
+        return redirect(url_for('index'))
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        if 'new_prohibited_word' in request.form:
+            new_word = request.form.get('new_prohibited_word').lower()
+            try:
+                cur.execute("INSERT INTO prohibited_words (word) VALUES (%s)", (new_word,))
+                conn.commit()
+                flash(f'Palabra prohibida "{new_word}" añadida con éxito.', 'success')
+            except IntegrityError:
+                flash(f'La palabra "{new_word}" ya existe.', 'danger')
+        
+        elif 'image' in request.files:
+            file = request.files['image']
+            description = request.form.get('description')
+            
+            if file.filename == '':
+                flash('No se seleccionó ninguna imagen', 'danger')
+                return redirect(url_for('panel_administrador'))
+
+            if file:
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                
+                cur.execute("INSERT INTO galeria (imagen, descripcion) VALUES (%s, %s)", (filename, description))
+                conn.commit()
+                flash('Imagen subida exitosamente', 'success')
+
+    # Cargar datos para mostrar en el panel
+    cur.execute("SELECT id, word FROM prohibited_words")
+    prohibited_words_list = cur.fetchall()
+    cur.execute("SELECT id, name, email, admin FROM users")
+    users = cur.fetchall()
+    cur.execute("SELECT id, usuario_id, datetime, servicio FROM reservas")
+    reservas = cur.fetchall()
+    cur.execute("SELECT nombre, email, telefono, asunto, mensaje FROM correocontacto")
+    correos = cur.fetchall()
+    cur.execute("SELECT nombre, valoracion, comentario FROM valoraciones")
+    valoraciones = cur.fetchall()
+    cur.execute("SELECT id, imagen, descripcion FROM galeria")
+    imagenes = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    if 'users' in session:
+        username = session['users']
+        admin = session.get('admin', False)
+        return render_template('templates_paneles/panel_administrador.html', 
+                               username=username, 
+                               admin=admin,
+                               prohibited_words=prohibited_words_list,
+                               users=users,
+                               reservas=reservas,
+                               correos=correos,
+                               valoraciones=valoraciones,
+                               imagenes=imagenes)
+    return redirect(url_for('templates_paneles/panel_administrador.html'))
+
+@app.route('/delete_image/<int:id>', methods=['POST'])
+def delete_image(id):
+    if 'admin' not in session or not session['admin']:
+        return redirect(url_for('index'))
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT imagen FROM galeria WHERE id = %s", (id,))
+    imagen = cur.fetchone()
+    
+    if imagen:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], imagen[0]))
+        cur.execute("DELETE FROM galeria WHERE id = %s", (id,))
+        conn.commit()
+        flash('Imagen eliminada exitosamente', 'success')
+    else:
+        flash('Imagen no encontrada', 'danger')
+
+    cur.close()
+    conn.close()
+    return redirect(url_for('panel_administrador'))
+
+@app.route('/delete_prohibited_word/<int:id>', methods=['POST'])
+def delete_prohibited_word(id):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM prohibited_words WHERE id = %s", (id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash('Palabra prohibida eliminada con éxito.', 'success')
+    return redirect(url_for('panel_administrador'))
 @app.route('/mipanel')
 def mipanel():
     if 'users' in session:
@@ -130,9 +320,9 @@ def change_password():
     if user and user[0] == hashed_current_password:
             cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
             connection.commit()
-            return jsonify({'message': 'Password updated successfully'})
+            return jsonify({'message': 'Contraseña actualizada correctamente'})
     else:
-            return jsonify({'message': 'Current password is incorrect'}), 400
+            return jsonify({'message': 'La contraseña actual es incorrecta'}), 400
     
 @app.route('/getCurrentEmail', methods=['GET'])
 def get_current_email():
@@ -155,7 +345,7 @@ def change_email():
     cursor = connection.cursor()
     cursor.execute("UPDATE users SET email=%s WHERE id=%s", (new_email, user_id))
     connection.commit()
-    return jsonify({'message': 'Email updated successfully'})
+    return jsonify({'message': 'Email actualizado correctamente'})
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -179,20 +369,24 @@ def login():
 @app.route('/register', methods=['POST'])
 def register():
     name = request.form['registerName']
+    last_name = request.form['registerLastName']
+    phone = request.form['registerPhone']
     email = request.form['registerEmail']
     password = request.form['registerPassword']
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
+        cursor.execute("INSERT INTO users (name, last_name, phone, email, password) VALUES (%s, %s, %s, %s, %s)", (name, last_name, phone, email, hashed_password))
         connection.commit()
         cursor.close()
         connection.close()
         return jsonify({'message': 'Registro exitoso'})
     except IntegrityError:
         return jsonify({'error': 'Este email ya está registrado'}), 400
-
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/logout')
 def logout():
@@ -289,73 +483,6 @@ def contacto_form():
         return render_template('contacto.html')
     else:
         return render_template('contacto.html',)
-    
-@app.route('/valoraciones', methods=['GET', 'POST'])
-def valoraciones_form():
-    if request.method == 'POST':
-        nombre = request.form.get('name')
-        valoracion = request.form.get('rating')
-        comentario = request.form.get('review')
-
-        try:
-            valoracion = int(valoracion)
-        except ValueError:
-            return "Valor de valoración inválido", 400
-
-        conn = connect_db()
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO valoraciones (nombre, valoracion, comentario) 
-            VALUES (%s, %s, %s)
-        """, (nombre, valoracion, comentario))
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return redirect(url_for('valoraciones_form'))
-
-    else:
-        conn = connect_db()
-        cur = conn.cursor()
-        cur.execute("SELECT nombre, valoracion, comentario FROM valoraciones")
-        valoraciones = cur.fetchall()
-        cur.close()
-        conn.close()
-
-        if 'users' in session:
-            username = session['users']
-            admin = session.get('admin', False)
-            return render_template('valoraciones.html', username=username, admin=admin, valoraciones=valoraciones)
-
-        return render_template('valoraciones.html', valoraciones=valoraciones)
-    
-@app.route('/panel_administrador', methods=['GET'])
-def panel_administrador():
-    print("Contenido de la sesión en /panel_administrador:", session)
-    if 'admin' in session and session['admin']:
-        username = session['users']
-        
-        connection = connect_db()
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT id, name, email FROM users")
-        users = cursor.fetchall()
-
-        cursor.execute("SELECT id, usuario_id, datetime, servicio FROM reservas")
-        reservas = cursor.fetchall()
-
-        cursor.execute("SELECT nombre, email, telefono, asunto, mensaje FROM correocontacto")
-        correos = cursor.fetchall()
-
-        cursor.execute("SELECT nombre, valoracion, comentario FROM valoraciones")
-        valoraciones = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-
-        return render_template('templates_paneles/panel_administrador.html', username=username, admin=True, users=users, reservas=reservas, correos=correos, valoraciones=valoraciones)
-    else:
-        return "No tienes permiso para acceder a esta página."
 
 @app.route('/delete_user/<int:id>', methods=['POST'])
 def delete_user(id):
@@ -412,6 +539,30 @@ def cancelar_reserva(id):
         return jsonify({'message': 'Reserva eliminada con éxito'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/assign_admin', methods=['POST'])
+def assign_admin():
+    user_id = request.form.get('user_id')
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET admin = TRUE WHERE id = %s", (user_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash('Usuario asignado como trabajador con éxito.', 'success')
+    return redirect(url_for('panel_administrador'))
+
+@app.route('/remove_admin', methods=['POST'])
+def remove_admin():
+    user_id = request.form.get('user_id')
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET admin = FALSE WHERE id = %s", (user_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash('Rol de trabajador removido con éxito.', 'success')
+    return redirect(url_for('panel_administrador'))
 
 @app.route('/getAllReservas', methods=['GET'])
 def get_all_reservas():

@@ -1,77 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbería SAMI</title>
+    <title>Barbería SAMI - Galería</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../static/css/styles.css">
     <style>
-
         body {
-            font-family: Arial, sans-serif;
-            background-color: #333;
+            background: url('../static/assets/barberia1.jpeg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
         }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .gallery-item {
-            margin: 10px;
-        }
-        .gallery-item img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-        }
-        .gallery-item p {
+
+        .gallery-title {
             text-align: center;
             color: white;
-            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .gallery-card {
+            background-color: rgba(40, 40, 40, 0.85);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-card img {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .gallery-card p {
+            margin: 10px 0;
+        }
+
+        .filter-dropdown {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .dropdown-menu .dropdown-item {
+            color: #fff;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #333;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            background-color: #444;
+        }
+
+        .dropdown-menu {
+            background-color: #444;
+            border: none;
+            min-width: 100%;
+            width: max-content;
+        }
+
+        .dropdown {
+            display: inline-block;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-toggle::after {
+            margin-left: 0.5em;
+        }
+
+        .dropdown-item {
+            white-space: nowrap;
         }
     </style>
 </head>
+
 <body>
     {% include 'includes/navbar.html' %}
     {% include 'includes/login.html' %}
     {% include 'includes/register.html' %}
     {% include 'includes/backtotop.html' %}
-    <div class="gallery">
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/buzzcut.jpg" alt="Peinado 1">
-            <p>Buzzcut</p>
-        </div>
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/fade.jpg" alt="Peinado 2">
-            <p>Fade</p>
-        </div>
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/frances.jpg" alt="Peinado 2">
-            <p>Francés</p>
-        </div>
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/mullet.jpg" alt="Peinado 2">
-            <p>Mullet</p>
-        </div>
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/pompadour.jpg" alt="Peinado 2">
-            <p>Pompadour</p>
-        </div>
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/undercut.jpg" alt="Peinado 2">
-            <p>Undercut</p>
-        </div>
-        <div class="gallery-item">
-            <img src="/static/assets/galeria/undercut bun.jpg" alt="Peinado 2">
-            <p>Undercut Bun</p>
+
+    <h1 class="gallery-title">Galería de Peinados</h1>
+
+    <div class="filter-dropdown">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Ordenar por
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
+                <a class="dropdown-item" href="/galeria?filter=recent" {% if filter_type=='recent' %}class="active" {%
+                    endif %}>Más reciente</a>
+                <a class="dropdown-item" href="/galeria?filter=oldest" {% if filter_type=='oldest' %}class="active" {%
+                    endif %}>Más antiguo</a>
+            </div>
         </div>
     </div>
+
+    <div class="row">
+        {% for imagen in imagenes %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card mb-4 gallery-card">
+                <img src="{{ url_for('static', filename='uploads/' ~ imagen[1]) }}" class="card-img-top"
+                    alt="Imagen de Galería">
+                <div class="card-body">
+                    <p class="card-text font-weight-bold">{{ imagen[2] }}</p>
+                    <p class="text-muted text-right">
+                        {% set adjusted_timestamp = imagen[3] %}
+                        {% set diff = (datetime.datetime.now(datetime.timezone.utc) -
+                        adjusted_timestamp).total_seconds() %}
+                        {% if diff < 3600 %} Hace {{ (diff // 60)|int }} minutos {% elif diff < 86400 %} Hace {{ (diff
+                            // 3600)|int }} horas {% else %} {{ adjusted_timestamp.strftime('%Y-%m-%d %H:%M') }} {%
+                            endif %} </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
     {% include 'includes/footer.html' %}
 
-
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="../static/js/script.js" defer></script>
     <script src="../static/js/form_handling.js" defer></script>
 </body>
+
 </html>

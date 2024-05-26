@@ -57,7 +57,7 @@ function generateCalendar(offset) {
                 });
 
                 var cell = headRow.insertCell();
-                cell.innerHTML = displayDate.charAt(0).toUpperCase() + displayDate.slice(1) + ' (' + day + ')';
+                cell.innerHTML = displayDate.charAt(0).toUpperCase() + displayDate.slice(1);
             });
 
             hours.forEach((hour, i) => {

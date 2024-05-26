@@ -11,7 +11,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: transparent;
             background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
             background-size: cover;
         }
@@ -33,22 +32,20 @@
             cursor: pointer;
         }
 
-        .star-rating input[type="radio"]:checked~label {
-            color: yellow;
-        }
-
+        .star-rating input[type="radio"]:checked~label,
         .star-rating input[type="radio"]:hover~label,
         .star-rating input[type="radio"]:hover~label~label {
             color: yellow;
         }
 
         #new-review-form {
-            width: 600px;
+            width: 100%;
+            max-width: 600px;
             margin: 20px auto;
             padding: 20px;
-            background-color: rgb(86, 79, 79);
+            background-color: transparent;
             border-radius: 4px;
-            box-shadow: 0 0 10px rgba(131, 127, 127, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             color: white;
         }
 
@@ -62,6 +59,7 @@
         }
 
         #new-review-form input[type="text"],
+        #new-review-form select,
         #new-review-form textarea {
             width: 100%;
             padding: 10px;
@@ -97,6 +95,15 @@
             <form action="/valoraciones" method="POST">
                 <label for="name">Nombre:</label>
                 <input type="text" name="name" id="name" required>
+                <label for="service">Servicio:</label>
+                <select name="service" id="service" required>
+                    <option value="Corte degradado">Corte degradado</option>
+                    <option value="Corte normal">Corte normal</option>
+                    <option value="Arreglo barba">Arreglo barba</option>
+                    <option value="Afeitar">Afeitar</option>
+                    <option value="Corte + Barba">Corte + Barba</option>
+                    <option value="Corte, Barba, Lavar y peinar">Corte, barba, lavar y peinar</option>
+                </select>
                 <label for="rating">Calificación:</label>
                 <div class="star-rating">
                     <input type="radio" name="rating" id="rating-5" value="5">
