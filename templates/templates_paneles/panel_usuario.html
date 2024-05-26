@@ -73,7 +73,35 @@
                 </div>
             </div>
         </div>
+
+        <!-- Botón de Borrar Cuenta -->
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <button class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal">Darse de baja</button>
+            </div>
+        </div>
     </main>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirmación de baja</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas darte de baja? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAccount">Darse de baja</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% include './includes/footer.html' %}
     <script src="/static/js/script.js"></script>
@@ -82,7 +110,27 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment/locale/es.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/js/revisar_reservas.js"></script>
+
+    <script>
+        document.getElementById('confirmDeleteAccount').addEventListener('click', function () {
+            $.ajax({
+                url: '/delete_account',
+                type: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = '/';
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error al borrar la cuenta.');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

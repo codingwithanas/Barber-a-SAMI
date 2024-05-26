@@ -76,9 +76,7 @@
                         <td>{{ user[1] }}</td>
                         <td>{{ user[2] }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('delete_user', id=user[0]) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
+                            <button class="btn btn-danger delete-user-btn" data-user-id="{{ user[0] }}" data-toggle="modal" data-target="#deleteUserModal">Eliminar</button>
                         </td>
                         <td>
                             {% if not user[3] %}
@@ -234,6 +232,27 @@
 
     {% include 'includes/footer.html' %}
 
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteUserModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteUser">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/js/script.js"></script>
@@ -251,6 +270,22 @@
                 fileInput.value = '';
                 event.preventDefault();
             }
+        });
+
+        let userIdToDelete;
+
+        document.querySelectorAll('.delete-user-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                userIdToDelete = this.getAttribute('data-user-id');
+            });
+        });
+
+        document.getElementById('confirmDeleteUser').addEventListener('click', function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete_user/${userIdToDelete}`;
+            document.body.appendChild(form);
+            form.submit();
         });
     </script>
 </body>

@@ -512,6 +512,27 @@ def delete_user(id):
     connection.close()
     return redirect(url_for('panel_administrador'))
 
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    if 'user_id' not in session:
+        return jsonify(success=False, message="Usuario no autenticado")
+
+    user_id = session['user_id']
+    conn = connect_db()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("DELETE FROM reservas WHERE usuario_id = %s", (user_id,))
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        session.clear()
+        return jsonify(success=True)
+    except Exception as e:
+        return jsonify(success=False, message=str(e))
+    finally:
+        cur.close()
+        conn.close()
+
 @app.route('/delete_reserva/<int:id>', methods=['POST'])
 def delete_reserva(id):
     connection = connect_db()
