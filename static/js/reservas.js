@@ -1,6 +1,6 @@
 window.onload = function () {
     generateCalendar(0);
-    setInterval(() => generateCalendar(0), 24 * 60 * 60 * 1000); // Actualizar cada día
+    setInterval(() => generateCalendar(0), 24 * 60 * 60 * 1000);
 
     document.getElementById('nextWeekButton').addEventListener('click', function() {
         weekOffset++;
@@ -21,7 +21,6 @@ function generateCalendar(offset) {
     var loadingMessage = document.getElementById('loadingMessage');
     var table = document.getElementById('reservasTable');
     
-    // Mostrar mensaje de carga y ocultar la tabla
     loadingMessage.style.display = 'block';
     table.style.display = 'none';
 
@@ -73,6 +72,8 @@ function generateCalendar(offset) {
 
                     if (j === 5 && i > 10) {
                         cell.innerHTML = 'Cerrado';
+                    } else if (date < new Date()) {
+                        cell.innerHTML = 'No disponible';
                     } else {
                         if (reservas[datetime]) {
                             cell.innerHTML = 'Reservado';
