@@ -560,3 +560,27 @@ button:hover {
     position: absolute;
     right: 10px;
 }
+
+.input-container input,
+.input-container select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.styled-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQ0NDIiBoZWlnaHQ9IjEwIiB3aWR0aD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwbDgsOGw4LThIMHoiLz48L3N2Zz4=') no-repeat right 10px center;
+    background-color: white;
+    padding-right: 30px;
+}
+
+.input-container select:focus {
+    border-color: #555;
+}

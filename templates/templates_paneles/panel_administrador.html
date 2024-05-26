@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
         }
     </style>
 </head>
+
 <body>
     {% include 'includes/navbar.html' %}
     {% include 'includes/flash_messages.html' %}
@@ -27,7 +29,8 @@
             <form method="POST" action="{{ url_for('panel_administrador') }}">
                 <div class="form-group">
                     <label for="new_prohibited_word" class="text-white">Añadir nueva palabra prohibida:</label>
-                    <input type="text" class="form-control" id="new_prohibited_word" name="new_prohibited_word" required>
+                    <input type="text" class="form-control" id="new_prohibited_word" name="new_prohibited_word"
+                        required>
                 </div>
                 <button type="submit" class="btn btn-primary">Añadir</button>
             </form>
@@ -63,7 +66,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
+                        <th>Apellido</th>
                         <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Sexo</th>
                         <th>Acciones</th>
                         <th>Asignar como trabajador</th>
                         <th>Quitar trabajador</th>
@@ -74,9 +80,13 @@
                     <tr>
                         <td>{{ user[0] }}</td>
                         <td>{{ user[1] }}</td>
+                        <td>{{ user[4] }}</td>
                         <td>{{ user[2] }}</td>
+                        <td>{{ user[5] }}</td>
+                        <td>{{ user[6] }}</td>
                         <td>
-                            <button class="btn btn-danger delete-user-btn" data-user-id="{{ user[0] }}" data-toggle="modal" data-target="#deleteUserModal">Eliminar</button>
+                            <button class="btn btn-danger delete-user-btn" data-user-id="{{ user[0] }}"
+                                data-toggle="modal" data-target="#deleteUserModal">Eliminar</button>
                         </td>
                         <td>
                             {% if not user[3] %}
@@ -99,6 +109,7 @@
                 </tbody>
             </table>
         </div>
+
 
         <!-- Revisar Reservas -->
         <div class="mb-4">
@@ -154,7 +165,8 @@
                         <td>{{ correo[3] }}</td>
                         <td>{{ correo[4] }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('delete_contacto', nombre=correo[0] or 'NULL', email=correo[1] or 'NULL', telefono=correo[2] or 'NULL') }}">
+                            <form method="POST"
+                                action="{{ url_for('delete_contacto', nombre=correo[0] or 'NULL', email=correo[1] or 'NULL', telefono=correo[2] or 'NULL') }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                             </form>
                         </td>
@@ -183,7 +195,8 @@
                         <td>{{ valoracion[1] }}</td>
                         <td>{{ valoracion[2] }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', valoracion=valoracion[1] or 'NULL') }}">
+                            <form method="POST"
+                                action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', valoracion=valoracion[1] or 'NULL') }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                             </form>
                         </td>
@@ -196,7 +209,8 @@
         <!-- Subir Imágenes a la Galería -->
         <div class="mb-4">
             <h3 class="text-white">Subir Nueva Imagen</h3>
-            <form method="POST" action="{{ url_for('panel_administrador') }}" enctype="multipart/form-data" id="uploadForm">
+            <form method="POST" action="{{ url_for('panel_administrador') }}" enctype="multipart/form-data"
+                id="uploadForm">
                 <div class="form-group">
                     <label for="image" class="text-white">Seleccionar Imagen:</label>
                     <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
@@ -216,7 +230,8 @@
                 {% for imagen in imagenes %}
                 <div class="col-md-4">
                     <div class="card mb-4">
-                        <img src="{{ url_for('static', filename='uploads/' ~ imagen[1]) }}" class="card-img-top" alt="Imagen de Galería">
+                        <img src="{{ url_for('static', filename='uploads/' ~ imagen[1]) }}" class="card-img-top"
+                            alt="Imagen de Galería">
                         <div class="card-body">
                             <p class="card-text">{{ imagen[2] }}</p>
                             <form method="POST" action="{{ url_for('delete_image', id=imagen[0]) }}">
@@ -233,7 +248,8 @@
     {% include 'includes/footer.html' %}
 
     <!-- Modal de Confirmación -->
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -261,7 +277,7 @@
     <script src="/static/js/revisar_reservas.js"></script>
 
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
             var fileInput = document.getElementById('image');
             var filePath = fileInput.value;
             var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
@@ -275,12 +291,12 @@
         let userIdToDelete;
 
         document.querySelectorAll('.delete-user-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 userIdToDelete = this.getAttribute('data-user-id');
             });
         });
 
-        document.getElementById('confirmDeleteUser').addEventListener('click', function() {
+        document.getElementById('confirmDeleteUser').addEventListener('click', function () {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/delete_user/${userIdToDelete}`;
@@ -289,4 +305,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -231,10 +231,10 @@ def panel_administrador():
             else:
                 flash('Solo se permiten archivos con extensiones .jpeg/.jpg/.png/.gif', 'danger')
 
+    cur.execute("SELECT id, name, email, admin, last_name, phone, sex FROM users")
+    users = cur.fetchall()
     cur.execute("SELECT id, word FROM prohibited_words")
     prohibited_words_list = cur.fetchall()
-    cur.execute("SELECT id, name, email, admin FROM users")
-    users = cur.fetchall()
     cur.execute("SELECT id, usuario_id, datetime, servicio FROM reservas")
     reservas = cur.fetchall()
     cur.execute("SELECT nombre, email, telefono, asunto, mensaje FROM correocontacto")
@@ -385,12 +385,14 @@ def register():
     phone = request.form['registerPhone']
     email = request.form['registerEmail']
     password = request.form['registerPassword']
+    sex = request.form['registerSex']
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
     try:
         connection = connect_db()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO users (name, last_name, phone, email, password) VALUES (%s, %s, %s, %s, %s)", (name, last_name, phone, email, hashed_password))
+        cursor.execute("INSERT INTO users (name, last_name, phone, email, password, sex) VALUES (%s, %s, %s, %s, %s, %s)",
+                       (name, last_name, phone, email, hashed_password, sex))
         connection.commit()
         cursor.close()
         connection.close()
