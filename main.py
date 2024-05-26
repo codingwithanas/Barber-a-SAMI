@@ -4,14 +4,18 @@ from flask import Flask, flash, request, jsonify, render_template, session, redi
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
 from werkzeug.utils import secure_filename
-#import openai
-#from config import API_KEY
+import openai
+from config import OPENAI_API_KEY, Config
 import os
 import hashlib
-
-#openai.api_key = API_KEY
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
+openai.api_key = OPENAI_API_KEY
+mail = Mail(app)
+
 app.secret_key = os.urandom(24)
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -458,6 +462,12 @@ def reservarcita():
                     (day_of_week, hour_of_day, datetime_str, user_id, servicio))
         if cur.rowcount > 0:
             conn.commit()
+
+            username = session['users']
+            msg = Message('Nueva Reserva', sender='anasassadek@ceroca.cat', recipients=['byforiouz@gmail.com'])
+            msg.body = f'{username} ha reservado el día {day_of_week} a las {hour_of_day} con servicio de {servicio}. Si está ocupado, ingrese a la web y cancele la reserva.'
+            mail.send(msg)
+
             return jsonify(success=True)
         else:
             return jsonify(success=False, message="No se pudo realizar la reserva")
