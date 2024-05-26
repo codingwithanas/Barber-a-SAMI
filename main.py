@@ -464,8 +464,8 @@ def reservarcita():
             conn.commit()
 
             username = session['users']
-            msg = Message('Nueva Reserva', sender='anasassadek@ceroca.cat', recipients=['byforiouz@gmail.com'])
-            msg.body = f'{username} ha reservado el día {day_of_week} a las {hour_of_day} con servicio de {servicio}. Si está ocupado, ingrese a la web y cancele la reserva.'
+            msg = Message('Nueva Reserva', sender=app.config['MAIL_USERNAME'], recipients=['byforiouz@gmail.com'])
+            msg.body = f'{username} ha reservado el día {day_of_week}, {datetime_str} con servicio de {servicio}. Si está ocupado, ingrese a la web y cancele la reserva.'
             mail.send(msg)
 
             return jsonify(success=True)
