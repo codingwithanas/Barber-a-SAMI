@@ -149,6 +149,22 @@ def galeria():
         return render_template('galeria.html', username=username, admin=admin, imagenes=imagenes, filter_type=filter_type, datetime=datetime)
     return render_template('galeria.html', imagenes=imagenes, filter_type=filter_type, datetime=datetime)
 
+@app.route('/edit_description/<int:image_id>', methods=['POST'])
+def edit_description(image_id):
+    new_description = request.form.get('newDescription')
+    conn = connect_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE galeria SET descripcion = %s WHERE id = %s", (new_description, image_id))
+        conn.commit()
+        flash('Descripción actualizada con éxito.', 'success')
+    except Exception as e:
+        flash(f'Error al actualizar la descripción: {str(e)}', 'danger')
+    finally:
+        cur.close()
+        conn.close()
+    return redirect(url_for('panel_administrador'))
+
 @app.route('/contact')
 def contacto():
     print(session)
