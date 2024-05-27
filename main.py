@@ -336,6 +336,34 @@ def panel_administrador():
                                imagenes=imagenes)
     return redirect(url_for('index'))
 
+@app.route('/edit_user/<int:id>', methods=['POST'])
+def edit_user(id):
+    if 'admin' not in session or not session['admin']:
+        return redirect(url_for('index'))
+    
+    name = request.form['editUserName']
+    last_name = request.form['editUserLastName']
+    email = request.form['editUserEmail']
+    phone = request.form['editUserPhone']
+    sex = request.form['editUserSex']
+    
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE users 
+            SET name = %s, last_name = %s, email = %s, phone = %s, sex = %s 
+            WHERE id = %s
+        """, (name, last_name, email, phone, sex, id))
+        conn.commit()
+        cur.close()
+        conn.close()
+        flash('Usuario actualizado con éxito', 'success')
+    except Exception as e:
+        flash(f'Error al actualizar el usuario: {str(e)}', 'danger')
+    
+    return redirect(url_for('panel_administrador'))
+
 @app.route('/delete_image/<int:id>', methods=['POST'])
 def delete_image(id):
     if 'admin' not in session or not session['admin']:

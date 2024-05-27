@@ -87,6 +87,11 @@
                         <td>
                             <button class="btn btn-danger delete-user-btn" data-user-id="{{ user[0] }}"
                                 data-toggle="modal" data-target="#deleteUserModal">Eliminar</button>
+                            <button class="btn btn-primary edit-user-btn" data-user-id="{{ user[0] }}"
+                                data-user-name="{{ user[1] }}" data-user-last-name="{{ user[4] }}"
+                                data-user-email="{{ user[2] }}" data-user-phone="{{ user[5] }}"
+                                data-user-sex="{{ user[6] }}" data-toggle="modal"
+                                data-target="#editUserModal">Editar</button>
                         </td>
                         <td>
                             {% if not user[3] %}
@@ -163,10 +168,9 @@
                         <td>{{ correo[3] }}</td>
                         <td>{{ correo[4] }}</td>
                         <td>
-                            <form method="POST"
-                                action="{{ url_for('delete_contacto', nombre=correo[0] or 'NULL', email=correo[1] or 'NULL', telefono=correo[2] or 'NULL') }}">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
+                            <button class="btn btn-danger delete-contacto-btn" data-nombre="{{ correo[0] }}"
+                                data-email="{{ correo[1] }}" data-telefono="{{ correo[2] }}" data-toggle="modal"
+                                data-target="#deleteContactoModal">Eliminar</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -193,10 +197,9 @@
                         <td>{{ valoracion[1] }}</td>
                         <td>{{ valoracion[2] }}</td>
                         <td>
-                            <form method="POST"
-                                action="{{ url_for('delete_valoracion', nombre=valoracion[0] or 'NULL', valoracion=valoracion[1] or 'NULL') }}">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
+                            <button class="btn btn-danger delete-valoracion-btn" data-nombre="{{ valoracion[0] }}"
+                                data-valoracion="{{ valoracion[1] }}" data-toggle="modal"
+                                data-target="#deleteValoracionModal">Eliminar</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -232,9 +235,8 @@
                             alt="Imagen de Galería">
                         <div class="card-body">
                             <p class="card-text">{{ imagen[2] }}</p>
-                            <form method="POST" action="{{ url_for('delete_image', id=imagen[0]) }}">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
+                            <button class="btn btn-danger delete-image-btn" data-image-id="{{ imagen[0] }}"
+                                data-toggle="modal" data-target="#deleteImageModal">Eliminar</button>
                             <button class="btn btn-primary edit-description-btn" data-image-id="{{ imagen[0] }}"
                                 data-description="{{ imagen[2] }}" data-toggle="modal"
                                 data-target="#editDescriptionModal">Editar Descripción</button>
@@ -248,7 +250,7 @@
 
     {% include 'includes/footer.html' %}
 
-    <!-- Modal de Confirmación -->
+    <!-- Modal de Confirmación de Eliminación de Usuario -->
     <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -295,6 +297,72 @@
         </div>
     </div>
 
+    <!-- Modal para Confirmar Eliminación de Valoración -->
+    <div class="modal fade" id="deleteValoracionModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteValoracionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteValoracionModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar esta valoración? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteValoracion">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Confirmar Eliminación de Imagen -->
+    <div class="modal fade" id="deleteImageModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteImageModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar esta imagen? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteImage">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Confirmar Eliminación de Correo -->
+    <div class="modal fade" id="deleteContactoModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteContactoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteContactoModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar este correo? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteContacto">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para Editar Descripción -->
     <div class="modal fade" id="editDescriptionModal" tabindex="-1" role="dialog"
         aria-labelledby="editDescriptionModalLabel" aria-hidden="true">
@@ -320,6 +388,51 @@
         </div>
     </div>
 
+    <!-- Modal para Editar Usuario -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" method="POST">
+                        <div class="form-group">
+                            <label for="editUserName" class="text-black">Nombre:</label>
+                            <input type="text" class="form-control" id="editUserName" name="editUserName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserLastName" class="text-black">Apellido:</label>
+                            <input type="text" class="form-control" id="editUserLastName" name="editUserLastName"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserEmail" class="text-black">Email:</label>
+                            <input type="email" class="form-control" id="editUserEmail" name="editUserEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserPhone" class="text-black">Teléfono:</label>
+                            <input type="text" class="form-control" id="editUserPhone" name="editUserPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserSex" class="text-black">Sexo:</label>
+                            <select class="form-control" id="editUserSex" name="editUserSex" required>
+                                <option value="Hombre">Hombre</option>
+                                <option value="Mujer">Mujer</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/js/script.js"></script>
@@ -339,7 +452,7 @@
             }
         });
 
-        let userIdToDelete;
+        let userIdToDelete, reservationIdToCancel, imageIdToDelete, valoracionIdToDelete, contactoIdToDelete;
 
         document.querySelectorAll('.delete-user-btn').forEach(button => {
             button.addEventListener('click', function () {
@@ -355,27 +468,81 @@
             form.submit();
         });
 
-        let imageIdToEdit;
+        document.querySelectorAll('.cancel-reservation-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                reservationIdToCancel = this.getAttribute('data-reservation-id');
+                document.getElementById('cancelReservationForm').action = `/cancel_reservation/${reservationIdToCancel}`;
+            });
+        });
+
+        document.querySelectorAll('.delete-image-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                imageIdToDelete = this.getAttribute('data-image-id');
+            });
+        });
+
+        document.getElementById('confirmDeleteImage').addEventListener('click', function () {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete_image/${imageIdToDelete}`;
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+        document.querySelectorAll('.delete-valoracion-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                valoracionIdToDelete = this.getAttribute('data-valoracion-id');
+            });
+        });
+
+        document.getElementById('confirmDeleteValoracion').addEventListener('click', function () {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete_valoracion/${valoracionIdToDelete}`;
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+        document.querySelectorAll('.delete-contacto-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                contactoIdToDelete = {
+                    nombre: this.getAttribute('data-nombre'),
+                    email: this.getAttribute('data-email'),
+                    telefono: this.getAttribute('data-telefono')
+                };
+            });
+        });
+
+        document.getElementById('confirmDeleteContacto').addEventListener('click', function () {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete_contacto/${contactoIdToDelete.nombre}/${contactoIdToDelete.email}/${contactoIdToDelete.telefono}`;
+            document.body.appendChild(form);
+            form.submit();
+        });
+
         document.querySelectorAll('.edit-description-btn').forEach(button => {
             button.addEventListener('click', function () {
-                imageIdToEdit = this.getAttribute('data-image-id');
+                const imageId = this.getAttribute('data-image-id');
                 const currentDescription = this.getAttribute('data-description');
                 document.getElementById('newDescription').value = currentDescription;
-                document.getElementById('editDescriptionForm').action = `/edit_description/${imageIdToEdit}`;
+                document.getElementById('editDescriptionForm').action = `/edit_description/${imageId}`;
             });
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            let reservationIdToCancel;
-
-            document.querySelectorAll('.cancel-reservation-btn').forEach(button => {
+            document.querySelectorAll('.edit-user-btn').forEach(button => {
                 button.addEventListener('click', function () {
-                    reservationIdToCancel = this.getAttribute('data-reservation-id');
-                    document.getElementById('cancelReservationForm').action = `/cancel_reservation/${reservationIdToCancel}`;
+                    const userId = this.getAttribute('data-user-id');
+                    document.getElementById('editUserName').value = this.getAttribute('data-user-name');
+                    document.getElementById('editUserLastName').value = this.getAttribute('data-user-last-name');
+                    document.getElementById('editUserEmail').value = this.getAttribute('data-user-email');
+                    document.getElementById('editUserPhone').value = this.getAttribute('data-user-phone');
+                    document.getElementById('editUserSex').value = this.getAttribute('data-user-sex');
+                    document.getElementById('editUserForm').action = `/edit_user/${userId}`;
                 });
             });
         });
-
     </script>
 </body>
 
