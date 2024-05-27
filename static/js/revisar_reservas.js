@@ -2,7 +2,7 @@ $(document).ready(function() {
     var reservationsList = $('#reservationsList');
     var noReservationsMessage = $('#noReservationsMessage');
 
-    moment.locale('es'); // Configurar moment.js al idioma español
+    moment.locale('es');
 
     function loadReservations() {
         $.ajax({

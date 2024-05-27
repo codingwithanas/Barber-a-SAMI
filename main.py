@@ -9,14 +9,16 @@ from config import OPENAI_API_KEY, Config
 import os
 import hashlib
 from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 app.config.from_object(Config)
 
 openai.api_key = OPENAI_API_KEY
 mail = Mail(app)
+serializer = URLSafeTimedSerializer(app.secret_key)
 
-app.secret_key = os.urandom(24)
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db_user = 'fl0user'
@@ -56,6 +58,48 @@ def estils():
         admin = session.get('admin', False)
         return render_template('estils.html', username=username, admin=admin)
     return render_template('estils.html', username=username)
+
+@app.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    email = request.form.get('forgotPasswordEmail')
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if user:
+        token = serializer.dumps(email, salt='password-reset-salt')
+        reset_url = url_for('reset_password', token=token, _external=True)
+        msg = Message('Restablecimiento de Contraseña', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg.body = f'Para restablecer tu contraseña, haz clic en el siguiente enlace: {reset_url}'
+        mail.send(msg)
+        return jsonify({'message': 'Correo de restablecimiento de contraseña enviado'})
+    else:
+        return jsonify({'error': 'Correo no encontrado'}), 404
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except:
+        return jsonify({'error': 'El enlace de restablecimiento de contraseña es inválido o ha expirado.'}), 400
+
+    if request.method == 'POST':
+        new_password = request.form.get('newPassword')
+        hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+        
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("UPDATE users SET password = %s WHERE email = %s", (hashed_password, email))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return render_template('index.html')
+
+    return render_template('reset_password.html', token=token)
 
 @app.route('/reservar')
 def reservar():
@@ -173,8 +217,8 @@ def resenas():
         conn.commit()
         cur.close()
         conn.close()
-        
-        msg = Message('Nueva Reseña', sender=app.config['MAIL_USERNAME'], recipients=['marioguba14@gmail.com'])
+
+        msg = Message('Nueva Reseña', sender=app.config['MAIL_USERNAME'], recipients=['barberiasami7@gmail.com'])
         msg.body = f'Un nuevo usuario ha realizado una reseña:\n\nNombre: {nombre}\nValoración: {valoracion}\nComentario: {comentario}\nServicio: {servicio}\nFecha: {timestamp}'
         mail.send(msg)
 
@@ -341,15 +385,25 @@ def change_password():
     user_id = session['user_id']
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute("SELECT password FROM users WHERE id=%s", (user_id,))
+    cursor.execute("SELECT password, email, name FROM users WHERE id=%s", (user_id,))
     user = cursor.fetchone()
     hashed_current_password = hashlib.sha256(current_password.encode()).hexdigest()
+
     if user and user[0] == hashed_current_password:
-            cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
-            connection.commit()
-            return jsonify({'message': 'Contraseña actualizada correctamente'})
+        cursor.execute("UPDATE users SET password=%s WHERE id=%s", (new_password, user_id))
+        connection.commit()
+
+        email = user[1]
+        name = user[2]
+        msg_to_user = Message('Cambio de Contraseña', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg_to_user.body = (f'Hola {name},\n\nTu contraseña ha sido cambiada exitosamente. '
+                            'Si no has sido tú quien realizó este cambio, por favor restablece tu contraseña utilizando el siguiente enlace: '
+                            f'{url_for("index", _external=True)}#forgotPassword\n\nGracias,\nEquipo de Barbería SAMI')
+        mail.send(msg_to_user)
+
+        return jsonify({'message': 'Contraseña actualizada correctamente'})
     else:
-            return jsonify({'message': 'La contraseña actual es incorrecta'}), 400
+        return jsonify({'message': 'La contraseña actual es incorrecta'}), 400
     
 @app.route('/getCurrentEmail', methods=['GET'])
 def get_current_email():
@@ -407,10 +461,20 @@ def register():
         connection = connect_db()
         cursor = connection.cursor()
         cursor.execute("INSERT INTO users (name, last_name, phone, email, password, sex) VALUES (%s, %s, %s, %s, %s, %s)",
-                       (name, last_name, phone, email, hashed_password, sex))
+                        (name, last_name, phone, email, hashed_password, sex))
         connection.commit()
         cursor.close()
         connection.close()
+
+        admin_email = 'barberiasami7@gmail.com'
+        msg_to_admin = Message('Nuevo Registro de Usuario', sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
+        msg_to_admin.body = f'Se ha registrado un nuevo usuario:\n\nNombre: {name} {last_name}\nEmail: {email}\nTeléfono: {phone}\nSexo: {sex}'
+        mail.send(msg_to_admin)
+
+        msg_to_user = Message('Bienvenido a Barbería SAMI', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg_to_user.body = f'Hola {name},\n\nGracias por registrarte en Barbería SAMI. ¡Esperamos verte pronto!'
+        mail.send(msg_to_user)
+
         return jsonify({'message': 'Registro exitoso'})
     except IntegrityError:
         return jsonify({'error': 'Este email ya está registrado'}), 400
@@ -484,7 +548,7 @@ def reservarcita():
             conn.commit()
 
             username = session['users']
-            msg = Message('Nueva Reserva', sender=app.config['MAIL_USERNAME'], recipients=['sadkisa6@gmail.com'])
+            msg = Message('Nueva Reserva', sender=app.config['MAIL_USERNAME'], recipients=['barberiasami7@gmail.com'])
             msg.body = f'{username} ha reservado el día {day_of_week}, {datetime_str} con servicio de {servicio}. Si está ocupado, ingrese a la web y cancele la reserva.'
             mail.send(msg)
 
@@ -506,7 +570,6 @@ def contacto_form():
         asunto = request.form.get('asunto')
         mensaje = request.form.get('mensaje')
 
-        # Validar que el teléfono tenga exactamente 9 dígitos
         if not telefono.isdigit() or len(telefono) != 9:
             flash('El número de teléfono debe tener exactamente 9 dígitos.', 'danger')
             return render_template('contacto.html')
@@ -521,11 +584,19 @@ def contacto_form():
         cur.close()
         conn.close()
 
+        admin_email = 'barberiasami7@gmail.com' 
+        msg_to_admin = Message('Nuevo Mensaje de Contacto', sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
+        msg_to_admin.body = f'Un nuevo mensaje de contacto ha sido enviado:\n\nNombre: {nombre}\nEmail: {email}\nTeléfono: {telefono}\nAsunto: {asunto}\nMensaje: {mensaje}'
+        mail.send(msg_to_admin)
+
+        msg_to_user = Message('Confirmación de Contacto', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg_to_user.body = f'Se ha enviado una solicitud de contacto, pronto nos pondremos en contacto contigo.\n\nNombre: {nombre}\nAsunto: {asunto}\nMensaje: {mensaje}'
+        mail.send(msg_to_user)
+
         flash('Tu mensaje ha sido enviado correctamente.', 'success')
         return render_template('contacto.html')
     else:
         return render_template('contacto.html')
-
 
 @app.route('/delete_user/<int:id>', methods=['POST'])
 def delete_user(id):
@@ -546,10 +617,27 @@ def delete_account():
     conn = connect_db()
     cur = conn.cursor()
 
+    cur.execute("SELECT name, last_name, email FROM users WHERE id = %s", (user_id,))
+    user = cur.fetchone()
+    if not user:
+        return jsonify(success=False, message="Usuario no encontrado")
+
+    name, last_name, email = user
+
     try:
         cur.execute("DELETE FROM reservas WHERE usuario_id = %s", (user_id,))
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
         conn.commit()
+
+        admin_email = 'barberiasami7@gmail.com'
+        msg_to_admin = Message('Baja de Usuario', sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
+        msg_to_admin.body = f'Un usuario se ha dado de baja:\n\nNombre: {name} {last_name}\nEmail: {email}'
+        mail.send(msg_to_admin)
+
+        msg_to_user = Message('Despedida de Barbería SAMI', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        msg_to_user.body = f'Hola {name},\n\nLamentamos que te vayas. Gracias por haber sido parte de Barbería SAMI. ¡Esperamos verte pronto de nuevo!'
+        mail.send(msg_to_user)
+
         session.clear()
         return jsonify(success=True)
     except Exception as e:
@@ -557,6 +645,7 @@ def delete_account():
     finally:
         cur.close()
         conn.close()
+
 
 @app.route('/delete_reserva/<int:id>', methods=['POST'])
 def delete_reserva(id):
@@ -596,13 +685,35 @@ def cancelar_reserva(id):
         user_id = session['user_id']
         connection = connect_db()
         cursor = connection.cursor()
+
+        # Obtener detalles de la reserva para el correo
+        cursor.execute("SELECT dia, hora, datetime, servicio FROM reservas WHERE id=%s AND usuario_id=%s", (id, user_id))
+        reserva = cursor.fetchone()
+
+        if not reserva:
+            return jsonify({'message': 'Reserva no encontrada o no autorizada'}), 404
+
         cursor.execute("DELETE FROM reservas WHERE id=%s AND usuario_id=%s", (id, user_id))
         connection.commit()
+
+        # Enviar correo electrónico notificando al administrador la cancelación de la reserva
+        admin_email = 'barberiasami7@gmail.com'  # Reemplaza con el correo del administrador
+        username = session['users']
+        dia, hora, datetime_reserva, servicio = reserva
+        msg_to_admin = Message('Cancelación de Reserva', sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
+        msg_to_admin.body = f'El usuario {username} ha cancelado la siguiente reserva:\n\nDía: {dia}\nHora: {hora}\nFecha y hora: {datetime_reserva}\nServicio: {servicio}'
+        mail.send(msg_to_admin)
+
         cursor.close()
         connection.close()
         return jsonify({'message': 'Reserva eliminada con éxito'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
 
 @app.route('/assign_admin', methods=['POST'])
 def assign_admin():
