@@ -662,16 +662,48 @@ def delete_account():
         cur.close()
         conn.close()
 
+@app.route('/cancel_reservation/<int:id>', methods=['POST'])
+def cancel_reservation(id):
+    if 'admin' not in session or not session['admin']:
+        return jsonify(success=False, message="No autorizado")
 
-@app.route('/delete_reserva/<int:id>', methods=['POST'])
-def delete_reserva(id):
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute("DELETE FROM reservas WHERE id = %s", (id,))
-    connection.commit()
-    cursor.close()
-    connection.close()
-    return redirect(url_for('panel_administrador'))
+    cancel_reason = request.form.get('cancelReason')
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+    try:
+        # Obtener detalles de la reserva y del usuario para el correo
+        cur.execute("""
+            SELECT u.email, u.name, r.dia, r.hora, r.datetime, r.servicio 
+            FROM reservas r 
+            JOIN users u ON r.usuario_id = u.id 
+            WHERE r.id = %s
+        """, (id,))
+        reserva = cur.fetchone()
+
+        if not reserva:
+            return jsonify(success=False, message="Reserva no encontrada")
+
+        user_email, user_name, dia, hora, datetime_reserva, servicio = reserva
+
+        # Eliminar la reserva
+        cur.execute("DELETE FROM reservas WHERE id = %s", (id,))
+        conn.commit()
+
+        # Enviar correo electrónico al usuario con la razón de la cancelación
+        msg_to_user = Message('Cancelación de Reserva', sender=app.config['MAIL_USERNAME'], recipients=[user_email])
+        msg_to_user.body = f'Hola {user_name},\n\nLamentamos informarte que tu reserva ha sido cancelada.\n\nRazón de la cancelación: {cancel_reason}\n\nDetalles de la reserva:\nDía: {dia}\nHora: {hora}\nFecha y Hora: {datetime_reserva}\nServicio: {servicio}\n\nDisculpa las molestias ocasionadas.'
+        mail.send(msg_to_user)
+
+        flash('Reserva cancelada y correo enviado al usuario.', 'success')
+        return redirect(url_for('panel_administrador'))
+    except Exception as e:
+        flash(f'Error al cancelar la reserva: {str(e)}', 'danger')
+        return redirect(url_for('panel_administrador'))
+    finally:
+        cur.close()
+        conn.close()
 
 @app.route('/delete_valoracion/<nombre>/<valoracion>', methods=['POST'])
 def delete_valoracion(nombre, valoracion):
@@ -702,7 +734,6 @@ def cancelar_reserva(id):
         connection = connect_db()
         cursor = connection.cursor()
 
-        # Obtener detalles de la reserva para el correo
         cursor.execute("SELECT dia, hora, datetime, servicio FROM reservas WHERE id=%s AND usuario_id=%s", (id, user_id))
         reserva = cursor.fetchone()
 
@@ -712,8 +743,7 @@ def cancelar_reserva(id):
         cursor.execute("DELETE FROM reservas WHERE id=%s AND usuario_id=%s", (id, user_id))
         connection.commit()
 
-        # Enviar correo electrónico notificando al administrador la cancelación de la reserva
-        admin_email = 'barberiasami7@gmail.com'  # Reemplaza con el correo del administrador
+        admin_email = 'barberiasami7@gmail.com'
         username = session['users']
         dia, hora, datetime_reserva, servicio = reserva
         msg_to_admin = Message('Cancelación de Reserva', sender=app.config['MAIL_USERNAME'], recipients=[admin_email])

@@ -59,6 +59,8 @@ function generateCalendar(offset) {
                 cell.innerHTML = displayDate.charAt(0).toUpperCase() + displayDate.slice(1);
             });
 
+            var now = new Date();
+
             hours.forEach((hour, i) => {
                 var row = table.insertRow(-1);
                 var timeCell = row.insertCell(0);
@@ -70,9 +72,11 @@ function generateCalendar(offset) {
                     date.setDate(today.getDate() + j);
                     var datetime = date.toISOString().split('T')[0] + ' ' + hour;
 
+                    var reservationTime = new Date(`${date.toISOString().split('T')[0]}T${hour}:00`);
+
                     if (j === 5 && i > 10) {
                         cell.innerHTML = 'Cerrado';
-                    } else if (date < new Date()) {
+                    } else if (reservationTime < now) {
                         cell.innerHTML = 'No disponible';
                     } else {
                         if (reservas[datetime]) {

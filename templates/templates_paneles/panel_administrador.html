@@ -131,9 +131,8 @@
                         <td>{{ reserva[2] }}</td>
                         <td>{{ reserva[3] }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('delete_reserva', id=reserva[0]) }}">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
+                            <button class="btn btn-danger cancel-reservation-btn" data-reservation-id="{{ reserva[0] }}"
+                                data-toggle="modal" data-target="#cancelReservationModal">Cancelar</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -236,7 +235,9 @@
                             <form method="POST" action="{{ url_for('delete_image', id=imagen[0]) }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                             </form>
-                            <button class="btn btn-primary edit-description-btn" data-image-id="{{ imagen[0] }}" data-description="{{ imagen[2] }}" data-toggle="modal" data-target="#editDescriptionModal">Editar Descripción</button>
+                            <button class="btn btn-primary edit-description-btn" data-image-id="{{ imagen[0] }}"
+                                data-description="{{ imagen[2] }}" data-toggle="modal"
+                                data-target="#editDescriptionModal">Editar Descripción</button>
                         </div>
                     </div>
                 </div>
@@ -269,8 +270,34 @@
         </div>
     </div>
 
+    <!-- Modal para Cancelar Reserva -->
+    <div class="modal fade" id="cancelReservationModal" tabindex="-1" role="dialog"
+        aria-labelledby="cancelReservationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelReservationModalLabel">Cancelar Reserva</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="cancelReservationForm" method="POST">
+                        <div class="form-group">
+                            <label for="cancelReason" class="text-black">Razón de la Cancelación:</label>
+                            <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cancelar Reserva</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para Editar Descripción -->
-    <div class="modal fade" id="editDescriptionModal" tabindex="-1" role="dialog" aria-labelledby="editDescriptionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editDescriptionModal" tabindex="-1" role="dialog"
+        aria-labelledby="editDescriptionModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -283,7 +310,8 @@
                     <form id="editDescriptionForm" method="POST">
                         <div class="form-group">
                             <label for="description" class="text-black">Nueva Descripción:</label>
-                            <textarea class="form-control" id="newDescription" name="newDescription" rows="3" required></textarea>
+                            <textarea class="form-control" id="newDescription" name="newDescription" rows="3"
+                                required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
@@ -336,6 +364,18 @@
                 document.getElementById('editDescriptionForm').action = `/edit_description/${imageIdToEdit}`;
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let reservationIdToCancel;
+
+            document.querySelectorAll('.cancel-reservation-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    reservationIdToCancel = this.getAttribute('data-reservation-id');
+                    document.getElementById('cancelReservationForm').action = `/cancel_reservation/${reservationIdToCancel}`;
+                });
+            });
+        });
+
     </script>
 </body>
 
