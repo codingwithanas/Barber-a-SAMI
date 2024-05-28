@@ -1,0 +1,55 @@
+<nav class="navbar">
+    <div class="container">
+        <a href="/" class="navbar-brand"><img src="/static/assets/logo.png" alt="Logo" class="logo"></a>
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <ul class="navbar-menu" id="navbarMenu">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/galeria">Galería</a></li>
+            <li><a href="/resenas">Reseñas</a></li>
+            <li><a href="/reservar">Reservas</a></li>
+            <li><a href="/contact">Contacto</a></li>
+            {% if username %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Bienvenido {{ username }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="/estils">Estils IA</a>
+                    {% if admin %}
+                    <a class="dropdown-item" href="/panel_administrador">Panel de administrador</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="/mipanel">Mi Panel</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                </div>
+            </li>
+            {% else %}
+            <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" id="closeBtn">×</button>
+    <a href="/" class="sidebar-logo"><img src="/static/assets/logo.png" alt="Logo" class="logo"></a>
+    <ul>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/servicios">Servicios</a></li>
+        <li><a href="/galeria">Galería</a></li>
+        <li><a href="/contact">Contacto</a></li>
+        <li><a href="/resenas">Reseñas</a></li>
+        <li><a href="/reservar">Reservas</a></li>
+        {% if username %}
+        <li><a href="/estils">Estils IA</a></li>
+        {% if admin %}
+        <li><a href="/panel_administrador">Panel de administrador</a></li>
+        {% endif %}
+        <li><a href="/mipanel">Bienvenido {{ username }}</a></li>
+        <li><a href="/logout">Cerrar sesión</a></li>
+        {% else %}
+        <li><a href="#" id="loginBtnSidebar">Inicia sesión</a></li>
+        {% endif %}
+    </ul>
+</div>

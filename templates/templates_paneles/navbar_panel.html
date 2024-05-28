@@ -1,0 +1,17 @@
+<nav class="navbar">
+    <div class="container">
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/services">Servicios</a></li>
+            <li><a href="/galeria">Galería</a></li>
+            <li><a href="/contact">Contacto</a></li>
+            <li><a href="/reservar">Reservas</a></li>
+            {% if username %}
+            <li><a href="/estils">Estils IA</a></li>
+            <li style="float:right"><a href="#">Bienvenido {{ username }}</a></li>
+            {% else %}
+            <li style="float:right"><a href="#" id="loginBtn">Inicia sesión</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

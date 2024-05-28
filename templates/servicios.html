@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbería SAMI</title>
+    <link rel="icon" href="/static/assets/logo.png" type="image/png">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        body {
+            background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .slide-content {
+           max-width: 800px;
+           margin: 0 auto;
+        }
+
+        .service-list {
+           margin-top: auto;
+           list-style-type: none;
+           padding: 0;
+        }
+
+        .service-list li {
+           margin-bottom: 20px;
+           border: 1px solid #ccc;
+           padding: 15px;
+           border-radius: 5px;
+           background-color: #bababa;
+        }
+
+        .service-list h3 {
+           margin-top: 0;
+           color: #000;
+        }
+
+        .service-list p {
+           margin-bottom: 0;
+           color: #666;
+        }
+   </style>
+</head>
+
+<body>
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'includes/forgot_password.html' %}
+    {% include 'includes/backtotop.html' %}
+    <!-- Contenido de Servicios -->
+    <section class="services">
+        <div class="container">
+            <div class="panel">
+                <div class="slide-content">
+                    <h2>Nuestros Servicios</h2>
+                    <img src="/static/assets/barberia9.jpeg" alt="Servicios" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </section>
+    {% include 'includes/footer.html' %}
+
+
+    <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
+</body>
+
+</html>

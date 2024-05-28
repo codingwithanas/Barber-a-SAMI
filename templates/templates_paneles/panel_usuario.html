@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Usuario</title>
+    <link rel="icon" href="/static/assets/logo.png" type="image/png">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/styles_panel_usuario.css">
+    <style>
+        body {
+            background: url('/static/assets/barberia1.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    {% include './includes/navbar.html' %}
+
+    <main class="container mt-5">
+        <h1 class="mb-5">Panel de Usuario</h1>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Cambiar Contraseña</div>
+                    <div class="card-body">
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label for="currentPassword">Contraseña Actual</label>
+                                <input type="password" id="currentPassword" name="currentPassword" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">Nueva Contraseña</label>
+                                <input type="password" id="newPassword" name="newPassword" class="form-control" minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Cambiar Correo Electrónico</div>
+                    <div class="card-body">
+                        <form id="changeEmailForm">
+                            <div class="form-group">
+                                <label for="currentEmail">Correo Electrónico Actual</label>
+                                <input type="email" id="currentEmail" required readonly class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="newEmail">Nuevo Correo Electrónico</label>
+                                <input type="email" id="newEmail" name="newEmail" required class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cambiar Correo Electrónico</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Tus Reservas</div>
+                    <div class="card-body">
+                        <ul id="reservationsList" class="list-group">
+                        </ul>
+                        <p id="noReservationsMessage">No tienes reservas actualmente o están cargando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón de Borrar Cuenta -->
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <button class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal">Darse de baja</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirmación de baja</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas darte de baja? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAccount">Darse de baja</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include './includes/footer.html' %}
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/form_handling.js"></script>
+    <script src="/static/js/cambio_datos.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/locale/es.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="/static/js/revisar_reservas.js"></script>
+
+    <script>
+        document.getElementById('confirmDeleteAccount').addEventListener('click', function () {
+            $.ajax({
+                url: '/delete_account',
+                type: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = '/';
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error al borrar la cuenta.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

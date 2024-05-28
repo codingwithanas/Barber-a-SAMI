@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbería SAMI</title>
+    <link rel="icon" href="/static/assets/logo.png" type="image/png">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        body {
+            background: url('/static/assets/barberia7.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .titulo-principal {
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+        }
+
+        .subtitulo {
+            color: rgb(255, 255, 255);
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'includes/navbar.html' %}
+    {% include 'includes/login.html' %}
+    {% include 'includes/register.html' %}
+    {% include 'includes/forgot_password.html' %}
+    {% include 'includes/backtotop.html' %}
+    <div class="slider">
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="titulo-principal">BARBERÍA SAMI</h2>
+                <p class="subtitulo">Un corte para cada personalidad.</p>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('/static/assets/Barberia2.jpeg');">
+            <div class="container mt-5 text-center">
+                <h1 class="mb-4">NUESTRO HORARIO</h1>
+                <div class="row justify-content-center">
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="day-box">
+                            <h2>LUN</h2>
+                            <p>09:30 - 20:00</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="day-box">
+                            <h2>MAR</h2>
+                            <p>09:30 - 20:00</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="day-box">
+                            <h2>MIÉ</h2>
+                            <p>09:30 - 20:00</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="day-box">
+                            <h2>JUE</h2>
+                            <p>09:30 - 20:00</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="day-box">
+                            <h2>VIE</h2>
+                            <p>09:30 - 20:00</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="day-box">
+                            <h2>SÁB</h2>
+                            <p>09:30 - 20:00</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="day-box closed">
+                            <h2>DOMINGO</h2>
+                            <p>CERRADO</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-4">
+                    <a href="/reservar" class="btn-link">PIDE UNA CITA</a>
+                </button>
+                <button class="btn btn-primary mt-4">
+                    <a href="/servicios" class="btn-link">NUESTROS SERVICIOS</a>
+                </button>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('/static/assets/Barberia6.jpeg');">
+            <div class="slide-content">
+                <h2>PUEDES VALORARNOS</h2>
+                <p>¿Has visitado nuestra barbería recientemente? Deja tu opinión!</p>
+                <button class="btn btn-primary mt-4">
+                    <a href="/resenas" class="btn-link">VALÓRANOS AQUÍ</a>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/footer.html' %}
+
+    <script src="../static/js/script.js" defer></script>
+    <script src="../static/js/form_handling.js" defer></script>
+</body>
+
+</html>

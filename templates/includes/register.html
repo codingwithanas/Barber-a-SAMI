@@ -1,0 +1,54 @@
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Registrarse</h2>
+        <form id="registerForm">
+            <label for="registerName">Nombre:</label>
+            <div class="input-container">
+                <input type="text" id="registerName" name="registerName" required>
+            </div>
+
+            <label for="registerLastName">Apellidos:</label>
+            <div class="input-container">
+                <input type="text" id="registerLastName" name="registerLastName" required>
+            </div>
+
+            <label for="registerSex">Sexo:</label>
+            <div class="input-container">
+                <select id="registerSex" name="registerSex" class="styled-select" required>
+                    <option value="">Selecciona tu sexo</option>
+                    <option value="hombre">Hombre</option>
+                    <option value="mujer">Mujer</option>
+                </select>
+            </div>
+
+            <label for="registerPhone">Teléfono:</label>
+            <div class="input-container">
+                <input type="text" id="registerPhone" name="registerPhone" pattern="\d{9}" required>
+            </div>
+
+            <label for="registerEmail">Correo Electrónico:</label>
+            <div class="input-container">
+                <input type="email" id="registerEmail" name="registerEmail" required>
+            </div>
+
+            <label for="registerPassword">Contraseña:</label>
+            <div class="input-container">
+                <input type="password" id="registerPassword" name="registerPassword" minlength="6" required>
+                <span class="icon"></span>
+            </div>
+
+            <label for="repeatPassword">Repite la contraseña:</label>
+            <div class="input-container">
+                <input type="password" id="repeatPassword" name="repeatPassword" minlength="6" required>
+                <span class="icon"></span>
+            </div>
+
+            <button type="submit">Registrarse</button>
+        </form>
+        <div id="registerLoading" style="display: none;"></div>
+        <div id="registerMessage"></div>
+        <br>
+        ¿Tienes cuenta? <a href="#" id="backToLogin">Volver atrás</a>
+    </div>
+</div>

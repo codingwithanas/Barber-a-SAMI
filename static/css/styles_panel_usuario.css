@@ -1,0 +1,19 @@
+.card {
+    background-color: rgba(174, 171, 171, 0.8);
+    color: black;
+}
+
+.card-header {
+    background-color: rgba(44, 42, 42, 0.8);
+    color: white;
+}
+
+.btn-primary {
+    background-color: #5cb85c;
+    border-color: #5cb85c;
+}
+
+.btn-primary:hover {
+    background-color: #449d44;
+    border-color: #449d44;
+}
