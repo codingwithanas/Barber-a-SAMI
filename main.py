@@ -1,5 +1,5 @@
 import datetime
-from datetime import date
+from datetime import date, timedelta
 from flask import Flask, flash, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from psycopg2 import connect, IntegrityError, sql
@@ -555,6 +555,8 @@ def chatbot():
     chatbot_requests[user_id] = user_requests
     return jsonify({'respuesta': respuesta['choices'][0]['message']['content'].strip()})
 
+from datetime import timedelta
+
 @app.route('/reservarcita', methods=['POST'])
 def reservarcita():
     if 'user_id' not in session:
@@ -581,6 +583,7 @@ def reservarcita():
 
     day_of_week = days_in_spanish[datetime_obj.strftime("%A")]
     hour_of_day = datetime_obj.strftime("%H:%M")
+    datetime_str = datetime_obj.strftime("%Y-%m-%d %H:%M")
 
     conn = connect_db()
     cur = conn.cursor()
@@ -604,6 +607,7 @@ def reservarcita():
     finally:
         cur.close()
         conn.close()
+
 
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto_form():

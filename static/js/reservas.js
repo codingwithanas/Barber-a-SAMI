@@ -18,8 +18,8 @@ window.onload = function () {
 let weekOffset = 0;
 
 function generateCalendar(offset) {
-    var loadingMessage = document.getElementById('loadingMessage');
-    var table = document.getElementById('reservasTable');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const table = document.getElementById('reservasTable');
     
     loadingMessage.style.display = 'block';
     table.style.display = 'none';
@@ -32,15 +32,15 @@ function generateCalendar(offset) {
             return response.json();
         }) 
         .then(reservas => {
-            var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            var hours = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+            const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const hours = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
 
             table.innerHTML = '';
 
-            var headRow = table.insertRow(0);
+            const headRow = table.insertRow(0);
             headRow.insertCell(0);
 
-            var today = new Date();
+            const today = new Date();
             today.setDate(today.getDate() + (offset * 7)); 
 
             while (today.getDay() !== 1) {
@@ -48,31 +48,38 @@ function generateCalendar(offset) {
             }
 
             days.forEach((day, i) => {
-                var date = new Date(today);
+                const date = new Date(today);
                 date.setDate(today.getDate() + i);
 
-                var displayDate = date.toLocaleDateString('es-ES', {
+                const displayDate = date.toLocaleDateString('es-ES', {
                     weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'
                 });
 
-                var cell = headRow.insertCell();
+                const cell = headRow.insertCell();
                 cell.innerHTML = displayDate.charAt(0).toUpperCase() + displayDate.slice(1);
             });
 
-            var now = new Date();
+            const now = new Date();
 
             hours.forEach((hour, i) => {
-                var row = table.insertRow(-1);
-                var timeCell = row.insertCell(0);
+                const row = table.insertRow(-1);
+                const timeCell = row.insertCell(0);
                 timeCell.innerHTML = hour;
 
                 days.forEach((day, j) => {
-                    var cell = row.insertCell(-1);
-                    var date = new Date(today);
+                    const cell = row.insertCell(-1);
+                    const date = new Date(today);
                     date.setDate(today.getDate() + j);
-                    var datetime = date.toISOString().split('T')[0] + ' ' + hour;
 
-                    var reservationTime = new Date(`${date.toISOString().split('T')[0]}T${hour}:00`);
+                    const [hourPart, minutePart] = hour.split(':');
+                    date.setHours(hourPart, minutePart, 0, 0);
+
+                    // Restar 2 horas al tiempo de la reserva
+                    date.setHours(date.getHours() + 2); // Cambiamos a +2 para mostrar correctamente la hora real en el calendario
+
+                    const datetime = date.toISOString().slice(0, 16).replace('T', ' ');
+
+                    const reservationTime = new Date(date);
 
                     if (j === 5 && i > 10) {
                         cell.innerHTML = 'Cerrado';
@@ -98,12 +105,12 @@ function generateCalendar(offset) {
 }
 
 function openForm(button) {
-    var datetime = button.getAttribute('data-datetime');
-    var confirmServiceButton = document.getElementById('confirmServiceButton');
+    const datetime = button.getAttribute('data-datetime');
+    const confirmServiceButton = document.getElementById('confirmServiceButton');
     
     confirmServiceButton.onclick = function() {
-        var serviceSelect = document.getElementById('serviceSelect');
-        var servicio = serviceSelect.value;
+        const serviceSelect = document.getElementById('serviceSelect');
+        const servicio = serviceSelect.value;
         makeReservation(datetime, servicio);
     };
 
