@@ -2,7 +2,8 @@ import datetime
 from datetime import date, timedelta
 from flask import Flask, flash, request, jsonify, render_template, session, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from psycopg2 import connect, IntegrityError, sql
+import mysql.connector
+from mysql.connector import Error
 from werkzeug.utils import secure_filename
 import openai
 from config import OPENAI_API_KEY, Config
@@ -21,12 +22,11 @@ serializer = URLSafeTimedSerializer(app.secret_key)
 
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-db_user = 'fl0user'
-db_password = 'QX2Bg8JoaRvG'
-db_host = 'ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io'
+db_user = 'root'
+db_password = ''
+db_host = 'localhost'
 db_name = 'dbanasimario'
-db_port = '5432'
-db_url = f"postgres://fl0user:QX2Bg8JoaRvG@ep-lively-lake-a1dxbq16.ap-southeast-1.aws.neon.fl0.io:5432/dbanasimario?sslmode=require"
+db_port = '3306'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -37,7 +37,12 @@ def allowed_file(filename):
 chatbot_requests = {}
 
 def connect_db():
-    return connect(db_url)
+    return mysql.connector.connect(
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
+    )
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -118,14 +123,13 @@ def servicios():
         admin = session.get('admin', False)
         return render_template('servicios.html', username=username, admin=admin)
     return render_template('servicios.html')
-    
 
 @app.route('/galeria')
 def galeria():
     conn = connect_db()
     cur = conn.cursor()
 
-    cur.execute("SET TIME ZONE 'Europe/Madrid';")
+    cur.execute("SET time_zone = '+02:00';")  # Madrid timezone (UTC+2)
 
     filter_type = request.args.get('filter', 'recent')
 
@@ -173,7 +177,7 @@ def contacto():
         admin = session.get('admin', False)
         return render_template('contacto.html', username=username, admin=admin)
     return render_template('contacto.html')
-    
+
 def load_prohibited_words():
     conn = connect_db()
     cur = conn.cursor()
@@ -184,7 +188,6 @@ def load_prohibited_words():
     return [word[0] for word in words]
 
 prohibited_words = load_prohibited_words()
-
 
 def contains_prohibited_words(comment):
     prohibited_words = load_prohibited_words()
@@ -283,7 +286,7 @@ def panel_administrador():
                 cur.execute("INSERT INTO prohibited_words (word) VALUES (%s)", (new_word,))
                 conn.commit()
                 flash(f'Palabra prohibida "{new_word}" añadida con éxito.', 'success')
-            except IntegrityError:
+            except mysql.connector.IntegrityError:
                 flash(f'La palabra "{new_word}" ya existe.', 'danger')
         
         elif 'image' in request.files:
@@ -396,6 +399,7 @@ def delete_prohibited_word(id):
     conn.close()
     flash('Palabra prohibida eliminada con éxito.', 'success')
     return redirect(url_for('panel_administrador'))
+
 @app.route('/mipanel')
 def mipanel():
     if 'users' in session:
@@ -419,7 +423,7 @@ def get_reservas():
         return jsonify({'reservas': reservas})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-        
+
 @app.route('/changePassword', methods=['POST'])
 def change_password():
     data = request.get_json()
@@ -448,7 +452,7 @@ def change_password():
         return jsonify({'message': 'Contraseña actualizada correctamente'})
     else:
         return jsonify({'message': 'La contraseña actual es incorrecta'}), 400
-    
+
 @app.route('/getCurrentEmail', methods=['GET'])
 def get_current_email():
     user_id = session['user_id']
@@ -520,7 +524,7 @@ def register():
         mail.send(msg_to_user)
 
         return jsonify({'message': 'Registro exitoso'})
-    except IntegrityError:
+    except mysql.connector.IntegrityError:
         return jsonify({'error': 'Este email ya está registrado'}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -607,7 +611,6 @@ def reservarcita():
     finally:
         cur.close()
         conn.close()
-
 
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto_form():
@@ -834,6 +837,6 @@ def get_all_reservas():
             cursor.close()
         if 'connection' in locals():
             connection.close()
-        
+
 if __name__ == '__main__':
     app.run(debug=True)
