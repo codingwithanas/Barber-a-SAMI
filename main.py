@@ -6,7 +6,7 @@ import mysql.connector
 from mysql.connector import Error
 from werkzeug.utils import secure_filename
 import openai
-from config import OPENAI_API_KEY, Config
+from config import Config
 import os
 import hashlib
 from flask_mail import Mail, Message
@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config.from_object(Config)
 
-openai.api_key = OPENAI_API_KEY
+#openai.api_key = OPENAI_API_KEY
 mail = Mail(app)
 serializer = URLSafeTimedSerializer(app.secret_key)
 
